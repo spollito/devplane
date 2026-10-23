@@ -1,0 +1,159 @@
+<!doctype html>
+<!--/*
+	A service's page: its details, then its steps from catalog entry to project to
+	repository. Until the service has a repository, the repository step is the next
+	step and holds the form that creates it.
+*/-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head(${service.name})}"></head>
+<body>
+	<th:block th:replace="~{layout :: topbar('services')}"></th:block>
+
+	<main id="main" class="page">
+		<div th:replace="~{layout :: notice}"></div>
+
+		<nav class="breadcrumbs" aria-label="Breadcrumbs">
+			<ol>
+				<li><a th:href="@{/services}">Services</a></li>
+				<li><span class="id" aria-current="page" th:text="${service.name}">orders-api</span></li>
+			</ol>
+		</nav>
+
+		<div class="page-header">
+			<div class="page-header__text">
+				<h1><span class="id" th:text="${service.name}">orders-api</span></h1>
+				<p th:if="${service.description != null}" class="muted" th:text="${service.description}">Order management REST API</p>
+				<p th:unless="${service.description != null}" class="muted">No description</p>
+			</div>
+		</div>
+
+		<dl class="summary">
+			<div>
+				<dt>Owner</dt>
+				<dd><a class="secondary-link id" th:href="${service.ownerUrl}" th:text="${service.owner}">payments-team</a></dd>
+			</div>
+			<div>
+				<dt>Lifecycle</dt>
+				<dd><span th:replace="~{fragments/lifecycle :: lifecycle(${service.stage})}"></span></dd>
+			</div>
+			<div>
+				<dt>Registered</dt>
+				<dd><time th:datetime="${service.registered.iso}" th:text="${service.registered.exact}">Oct 14, 2026, 09:12</time></dd>
+			</div>
+			<div>
+				<dt>Updated</dt>
+				<dd><time th:datetime="${service.updated.iso}" th:text="${service.updated.exact}">Oct 21, 2026, 16:40</time></dd>
+			</div>
+		</dl>
+
+		<section class="section" aria-labelledby="code-heading">
+			<h2 id="code-heading">Code</h2>
+			<ol class="path">
+				<li class="step">
+					<div class="step__head">
+						<h3>Catalog entry</h3>
+						<p class="step__status">Registered <time th:datetime="${service.registered.iso}"
+								th:text="${service.registered.exact}">Oct 14, 2026, 09:12</time></p>
+					</div>
+				</li>
+
+				<li class="step">
+					<div class="step__head">
+						<h3>Project</h3>
+						<p class="step__status">Generated from <span class="id" th:text="${template.name}">java-rest-api</span>
+							each time you download it. DevPlane doesn't keep a copy.</p>
+					</div>
+					<div class="step__actions">
+						<a class="button" th:href="@{/api/v1/services/{name}/project(name=${service.name})}" download>
+							<svg th:replace="~{fragments/icons :: download}"></svg>
+							Download project
+						</a>
+						<span class="small muted id" th:text="${service.name + '.zip'}">orders-api.zip</span>
+					</div>
+				</li>
+
+				<li th:if="${service.repository != null}" class="step" id="repository-step">
+					<div class="step__head">
+						<h3>Repository</h3>
+						<p class="step__status">Created <time th:datetime="${service.repositoryCreated.iso}"
+								th:text="${service.repositoryCreated.exact}">Oct 22, 2026, 15:02</time> from <span class="id"
+								th:text="${service.repository.template}">java-rest-api</span></p>
+					</div>
+					<!--/* A request to create a second repository fails, and says so here. */-->
+					<th:block th:if="${repositoryError != null}">
+						<div th:replace="~{fragments/path :: repositoryError(${repositoryError}, ${repositoryErrorStatus})}"></div>
+					</th:block>
+					<a class="repo-link" th:href="${service.repository.url}">
+						<span class="id" th:text="${service.repository.fullName}">octo-dev/orders-api</span>
+						<svg th:replace="~{fragments/icons :: external}"></svg>
+					</a>
+				</li>
+
+				<li th:unless="${service.repository != null}" class="step step--next" id="repository-step">
+					<svg th:replace="~{fragments/path :: outline}"></svg>
+					<div class="step__head">
+						<h3>Repository</h3>
+						<p class="step__status">Not created yet. DevPlane creates it on GitHub and pushes the project as the
+							first commit.</p>
+					</div>
+
+					<th:block th:if="${repositoryError != null}">
+						<div th:replace="~{fragments/path :: repositoryError(${repositoryError}, ${repositoryErrorStatus})}"></div>
+					</th:block>
+
+					<!--/*
+						With JavaScript on, htmx posts the form, follows the redirect, and swaps in
+						the new page's main, so the result appears without a reload. While it waits,
+						the options and button are disabled and the step is marked busy.
+					*/-->
+					<form class="step__options" th:action="@{/services/{name}/repository(name=${service.name})}" method="post"
+							th:attr="hx-post=@{/services/{name}/repository(name=${service.name})}"
+							hx-select="main" hx-target="main" hx-swap="outerHTML"
+							hx-disabled-elt="find button, find fieldset"
+							hx-on::before-request="this.closest('.step').setAttribute('aria-busy', 'true')"
+							hx-on::after-request="this.closest('.step').removeAttribute('aria-busy')">
+						<fieldset class="field">
+							<legend class="field__label">Visibility</legend>
+							<label class="choice">
+								<input type="radio" name="visibility" value="private" th:checked="${visibility != 'public'}">
+								<span>Private</span>
+								<span class="choice__hint">Only you and the people you invite on GitHub can see it.</span>
+							</label>
+							<label class="choice">
+								<input type="radio" name="visibility" value="public" th:checked="${visibility == 'public'}">
+								<span>Public</span>
+								<span class="choice__hint">Anyone on the internet can see it.</span>
+							</label>
+						</fieldset>
+						<dl class="facts">
+							<dt>Template</dt>
+							<dd class="id" th:text="${template.name}">java-rest-api</dd>
+							<dt>Name</dt>
+							<dd class="id" th:text="${service.name}">orders-api</dd>
+						</dl>
+						<div class="step__actions">
+							<button class="button button--primary" type="submit">
+								<span class="when-idle">Create repository</span>
+								<span class="when-pending">Creating repository…</span>
+							</button>
+							<p class="when-pending muted">This takes a few seconds.</p>
+						</div>
+					</form>
+				</li>
+			</ol>
+		</section>
+
+		<section class="section unregister" aria-labelledby="unregister-heading">
+			<div class="unregister__text">
+				<h2 id="unregister-heading">Unregister</h2>
+				<p th:unless="${service.repository != null}" class="muted">Removes <span class="id"
+						th:text="${service.name}">orders-api</span> from the catalog.</p>
+				<p th:if="${service.repository != null}" class="muted">Removes <span class="id"
+						th:text="${service.name}">orders-api</span> from the catalog. Its repository <span class="id"
+						th:text="${service.repository.fullName}">octo-dev/orders-api</span> stays on GitHub.</p>
+			</div>
+			<a class="button button--danger" th:href="@{/services/{name}/unregister(name=${service.name})}">Unregister service</a>
+		</section>
+	</main>
+</body>
+</html>

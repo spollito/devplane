@@ -1,0 +1,21 @@
+<!doctype html>
+<!--/* The page for an unexpected error. It never shows the exception. */-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head('Unexpected error')}"></head>
+<body>
+	<th:block th:replace="~{layout :: topbar('')}"></th:block>
+
+	<main id="main" class="page">
+		<div class="page-header">
+			<div class="page-header__text">
+				<h1>DevPlane couldn't finish this request</h1>
+			</div>
+		</div>
+
+		<div class="prose">
+			<p>The DevPlane log has the details.</p>
+			<p><a th:href="@{/services}">Go to Services</a></p>
+		</div>
+	</main>
+</body>
+</html>

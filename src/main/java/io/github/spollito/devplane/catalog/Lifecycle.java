@@ -10,11 +10,17 @@ public enum Lifecycle {
 	/** Matches exactly the values {@link #fromApiValue} accepts. */
 	static final String API_VALUE_PATTERN = "experimental|production|deprecated";
 
-	String apiValue() {
+	/** The stage's name in the API and on pages: "experimental", "production", or "deprecated". */
+	public String apiValue() {
 		return name().toLowerCase(Locale.ROOT);
 	}
 
-	static Lifecycle fromApiValue(String value) {
+	/**
+	 * The stage with this API name.
+	 * @throws IllegalArgumentException if no stage has this name, which validation
+	 * against {@link #API_VALUE_PATTERN} rules out
+	 */
+	public static Lifecycle fromApiValue(String value) {
 		return valueOf(value.toUpperCase(Locale.ROOT));
 	}
 

@@ -11,10 +11,9 @@ import org.jspecify.annotations.Nullable;
 record ServiceResponse(String name, String owner, String description, String lifecycle, Instant createdAt,
 		Instant updatedAt, @Nullable SourceRepository repository) {
 
-	static ServiceResponse from(ServiceEntity service) {
-		return new ServiceResponse(service.getName(), service.getOwner(), service.getDescription(),
-				service.getLifecycle().apiValue(), service.getCreatedAt(), service.getUpdatedAt(),
-				service.getRepository());
+	static ServiceResponse from(RegisteredService service) {
+		return new ServiceResponse(service.name(), service.owner(), service.description(),
+				service.lifecycle().apiValue(), service.createdAt(), service.updatedAt(), service.repository());
 	}
 
 }

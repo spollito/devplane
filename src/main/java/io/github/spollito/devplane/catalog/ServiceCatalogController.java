@@ -38,17 +38,18 @@ class ServiceCatalogController {
 	@PostMapping
 	ResponseEntity<ServiceResponse> register(@Valid @RequestBody RegisterServiceRequest request) {
 		Lifecycle lifecycle = (request.lifecycle() != null) ? Lifecycle.fromApiValue(request.lifecycle()) : null;
-		ServiceEntity service = catalog.register(request.name(), request.owner(), request.description(), lifecycle);
+		RegisteredService service = catalog.register(request.name(), request.owner(), request.description(),
+				lifecycle);
 		URI location = ServletUriComponentsBuilder.fromCurrentRequestUri()
 			.path("/{name}")
-			.buildAndExpand(service.getName())
+			.buildAndExpand(service.name())
 			.toUri();
 		return ResponseEntity.created(location).body(ServiceResponse.from(service));
 	}
 
 	@GetMapping("/{name}")
 	ServiceResponse get(@PathVariable String name) {
-		return ServiceResponse.from(catalog.get(name));
+		return ServiceResponse.from(catalog.lookUp(name));
 	}
 
 	@PutMapping("/{name}")

@@ -1,0 +1,89 @@
+<!doctype html>
+<!--/*
+	The catalog. state is "list", "no-match" (an owner filter that matches nothing),
+	or "empty" (no services at all, where an introduction to DevPlane takes the
+	table's place).
+*/-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head('Services')}"></head>
+<body>
+	<th:block th:replace="~{layout :: topbar('services')}"></th:block>
+
+	<main id="main" class="page">
+		<div th:replace="~{layout :: notice}"></div>
+
+		<div class="page-header">
+			<div class="page-header__text">
+				<h1>Services</h1>
+			</div>
+			<a th:unless="${state == 'empty'}" class="button button--primary" th:href="@{/register}">Register service</a>
+		</div>
+
+		<!--/* With JavaScript on, htmx filters in place: it asks for the same page and swaps in its results. */-->
+		<form th:unless="${state == 'empty'}" class="filter" th:action="@{/services}" method="get" role="search"
+				hx-get="/services" hx-trigger="input changed delay:300ms from:find input, submit"
+				hx-select="#results" hx-target="#results" hx-swap="outerHTML" hx-push-url="true">
+			<label class="field__label" for="owner">Owner</label>
+			<input class="input id" id="owner" name="owner" type="text" autocomplete="off" spellcheck="false"
+					th:value="${owner}">
+			<button class="button" type="submit">Filter</button>
+		</form>
+
+		<div id="results" th:unless="${state == 'empty'}">
+			<th:block th:if="${state == 'list'}">
+				<table class="table">
+					<caption class="visually-hidden">Registered services</caption>
+					<thead>
+						<tr>
+							<th scope="col">Name</th>
+							<th scope="col" class="cell-description">Description</th>
+							<th scope="col" class="cell-owner">Owner</th>
+							<th scope="col">Lifecycle</th>
+							<th scope="col" class="cell-repository">Repository</th>
+							<th scope="col" class="cell-updated">Updated</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="row : ${rows}">
+							<td><a class="id" th:href="@{/services/{name}(name=${row.name})}" th:text="${row.name}">orders-api</a><div
+									class="table__owner-below small muted id" th:text="${row.owner}">payments-team</div></td>
+							<td th:if="${row.description != null}" class="cell-description" th:title="${row.description}"
+									th:text="${row.description}">Order management REST API</td>
+							<td th:unless="${row.description != null}" class="cell-description muted">No description</td>
+							<td class="cell-owner"><a class="secondary-link id" th:href="${row.ownerUrl}"
+									th:text="${row.owner}">payments-team</a></td>
+							<td><span th:replace="~{fragments/lifecycle :: lifecycle(${row.stage})}"></span></td>
+							<td th:if="${row.repository != null}" class="cell-repository"><a class="secondary-link id"
+									th:href="${row.repository.url}" th:text="${row.repository.fullName}">octo-dev/orders-api</a></td>
+							<td th:unless="${row.repository != null}" class="cell-repository muted">None</td>
+							<td class="cell-updated muted"><time th:datetime="${row.updated.iso}" th:title="${row.updated.exact}"
+									th:text="${row.updated.relative}">Yesterday</time></td>
+						</tr>
+					</tbody>
+				</table>
+				<div class="table-footer">
+					<p class="muted" th:text="${summary}">3 services</p>
+					<nav th:if="${previousUrl != null or nextUrl != null}" class="pagination" aria-label="Pages">
+						<a th:if="${previousUrl != null}" class="button" th:href="${previousUrl}" rel="prev">Previous</a>
+						<a th:if="${nextUrl != null}" class="button" th:href="${nextUrl}" rel="next">Next</a>
+					</nav>
+				</div>
+			</th:block>
+
+			<div th:if="${state == 'no-match'}" class="empty">
+				<p><span class="id" th:text="${owner}">billing-team</span> owns no services.</p>
+				<a th:href="@{/services}">Show all services</a>
+			</div>
+		</div>
+
+		<section th:if="${state == 'empty'}" class="intro" aria-labelledby="intro-heading">
+			<div class="intro__text">
+				<h2 id="intro-heading">No services are registered yet</h2>
+				<p class="muted">DevPlane keeps track of your services and who owns them, and gives each one a starting
+					project and a GitHub repository.</p>
+			</div>
+			<ol th:replace="~{fragments/path :: intro(${defaultTemplate})}"></ol>
+		</section>
+	</main>
+</body>
+</html>

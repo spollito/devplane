@@ -1,0 +1,868 @@
+/* DevPlane's stylesheet. Values follow docs/ui-guidelines.md, and the approved
+   mockups in docs/mockups/ show how they look. */
+
+/* Atkinson Hyperlegible Next and Mono, from Fontsource (SIL Open Font License, in
+   /fonts/OFL.txt). DevPlane serves them itself, so pages work offline. */
+@font-face {
+	font-family: "Atkinson Hyperlegible Next";
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src: url("/fonts/atkinson-hyperlegible-next-latin-400-normal.woff2") format("woff2");
+}
+
+@font-face {
+	font-family: "Atkinson Hyperlegible Next";
+	font-style: normal;
+	font-weight: 600;
+	font-display: swap;
+	src: url("/fonts/atkinson-hyperlegible-next-latin-600-normal.woff2") format("woff2");
+}
+
+@font-face {
+	font-family: "Atkinson Hyperlegible Mono";
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src: url("/fonts/atkinson-hyperlegible-mono-latin-400-normal.woff2") format("woff2");
+}
+
+:root {
+	color-scheme: dark;
+
+	--bg: #0e131b;
+	--surface: #141a24;
+	--surface-hover: #19212d;
+	--line: #242d3b;
+	--line-control: #5c6779;
+	--text: #e3e7ed;
+	--text-muted: #9ba4b1;
+	--accent: #6b9bff;
+	--accent-strong: #2f6bf0;
+	--accent-strong-hover: #2a60d9;
+	--on-accent: #ffffff;
+	--production: #3fbf7f;
+	--experimental: #e0b03c;
+	--deprecated: #8a94a3;
+	--error: #ff7a70;
+	--success: #4cc38a;
+
+	--space-1: 4px;
+	--space-2: 8px;
+	--space-3: 12px;
+	--space-4: 16px;
+	--space-5: 24px;
+	--space-6: 32px;
+	--space-7: 48px;
+
+	--font-sans: "Atkinson Hyperlegible Next", system-ui, sans-serif;
+	--font-mono: "Atkinson Hyperlegible Mono", ui-monospace, monospace;
+	--radius-control: 3px;
+	--content-width: 1120px;
+	--gutter: var(--space-5);
+}
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+	background: var(--bg);
+	color: var(--text);
+	font: 400 14px/20px var(--font-sans);
+	-webkit-text-size-adjust: 100%;
+}
+
+h1,
+h2,
+h3,
+p,
+dl,
+dd,
+figure {
+	margin: 0;
+}
+
+h1 {
+	font-size: 20px;
+	line-height: 28px;
+	font-weight: 600;
+}
+
+h2 {
+	font-size: 16px;
+	line-height: 24px;
+	font-weight: 600;
+}
+
+h3 {
+	font-size: 14px;
+	line-height: 20px;
+	font-weight: 600;
+}
+
+a {
+	color: var(--accent);
+	text-decoration: none;
+	text-underline-offset: 3px;
+	transition: color 100ms;
+}
+
+a:hover,
+a:focus-visible {
+	text-decoration: underline;
+}
+
+:focus-visible {
+	outline: 2px solid var(--accent);
+	outline-offset: 2px;
+}
+
+/* Atkinson Hyperlegible Mono runs wider than the sans, so it's set 1px smaller. */
+.id {
+	font-family: var(--font-mono);
+	font-size: calc(1em - 1px);
+	white-space: nowrap;
+}
+
+/* A title can hold a 63-character name, so it may wrap. */
+h1 .id {
+	white-space: normal;
+	overflow-wrap: anywhere;
+}
+
+.muted {
+	color: var(--text-muted);
+}
+
+.small {
+	font-size: 12px;
+	line-height: 16px;
+}
+
+/* 12px is the smallest text, monospace included. */
+.small.id,
+.small .id {
+	font-size: 12px;
+}
+
+.icon {
+	width: 16px;
+	height: 16px;
+	flex: none;
+	fill: none;
+	stroke: currentColor;
+	stroke-width: 2;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+}
+
+.visually-hidden {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
+}
+
+/* Skip link */
+
+.skip-link {
+	position: absolute;
+	left: var(--space-4);
+	top: var(--space-2);
+	padding: var(--space-1) var(--space-2);
+	background: var(--bg);
+	transform: translateY(-200%);
+}
+
+.skip-link:focus {
+	transform: none;
+}
+
+/* Top bar */
+
+.topbar {
+	height: 48px;
+	background: var(--surface);
+	border-bottom: 1px solid var(--line);
+}
+
+.topbar__inner {
+	display: flex;
+	align-items: stretch;
+	gap: var(--space-5);
+	max-width: var(--content-width);
+	height: 100%;
+	margin: 0 auto;
+	padding: 0 var(--gutter);
+}
+
+.wordmark {
+	display: flex;
+	align-items: center;
+	gap: var(--space-2);
+	color: var(--text);
+	font-weight: 600;
+}
+
+.wordmark:hover {
+	text-decoration: none;
+}
+
+.wordmark svg {
+	width: 18px;
+	height: 18px;
+	fill: none;
+	stroke: currentColor;
+	stroke-width: 1.25;
+	stroke-linejoin: round;
+}
+
+.nav {
+	display: flex;
+	gap: var(--space-4);
+}
+
+.nav a {
+	display: flex;
+	align-items: center;
+	color: var(--text-muted);
+	border-top: 2px solid transparent;
+	border-bottom: 2px solid transparent;
+}
+
+.nav a:hover {
+	color: var(--text);
+	text-decoration: none;
+}
+
+.nav a[aria-current="page"] {
+	color: var(--text);
+	border-bottom-color: var(--text);
+}
+
+.nav--end {
+	margin-left: auto;
+}
+
+/* Page */
+
+.page {
+	max-width: var(--content-width);
+	margin: 0 auto;
+	padding: var(--space-5) var(--gutter) var(--space-7);
+}
+
+.breadcrumbs ol {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--space-2);
+	margin: 0 0 var(--space-2);
+	padding: 0;
+	list-style: none;
+	color: var(--text-muted);
+}
+
+.breadcrumbs li + li::before {
+	content: "/";
+	margin-right: var(--space-2);
+	color: var(--text-muted);
+}
+
+.page-header {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: var(--space-3) var(--space-4);
+	margin-bottom: var(--space-5);
+}
+
+.page-header__text {
+	display: grid;
+	gap: var(--space-1);
+	min-width: 0;
+}
+
+.section {
+	margin-top: var(--space-6);
+}
+
+/* Paragraphs of body text, kept under 80 characters a line. */
+.prose {
+	display: grid;
+	gap: var(--space-3);
+	max-width: 64ch;
+}
+
+.section > h2 {
+	margin-bottom: var(--space-3);
+}
+
+/* Buttons */
+
+.button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--space-2);
+	height: 32px;
+	padding: 0 var(--space-3);
+	border: 1px solid var(--line-control);
+	border-radius: var(--radius-control);
+	background: transparent;
+	color: var(--text);
+	font: 600 14px/20px var(--font-sans);
+	white-space: nowrap;
+	cursor: pointer;
+	transition: background-color 100ms, border-color 100ms;
+}
+
+.button:hover {
+	background: var(--surface-hover);
+	text-decoration: none;
+}
+
+.button--primary {
+	border-color: var(--accent-strong);
+	background: var(--accent-strong);
+	color: var(--on-accent);
+}
+
+.button--primary:hover {
+	border-color: var(--accent-strong-hover);
+	background: var(--accent-strong-hover);
+}
+
+.button--danger {
+	border-color: var(--error);
+	color: var(--error);
+}
+
+.button[aria-disabled="true"],
+.button:disabled {
+	cursor: progress;
+}
+
+/* While htmx sends a form, it has the htmx-request class: the button's label and the
+   form's hint switch to say what's happening. */
+.when-pending,
+.htmx-request .when-idle {
+	display: none;
+}
+
+.htmx-request .when-pending {
+	display: inline;
+}
+
+p.when-pending {
+	margin: 0;
+}
+
+.htmx-request p.when-pending {
+	display: block;
+}
+
+/* Form fields */
+
+.field {
+	display: grid;
+	gap: var(--space-1);
+	margin: 0;
+	padding: 0;
+	border: 0;
+	min-width: 0;
+}
+
+.field__label {
+	padding: 0;
+	font-weight: 600;
+}
+
+.field__hint {
+	font-size: 12px;
+	line-height: 16px;
+	color: var(--text-muted);
+}
+
+.field__error {
+	color: var(--error);
+}
+
+.input[aria-invalid="true"] {
+	border-color: var(--error);
+}
+
+/* Forms are at most 480px wide. */
+.form {
+	display: grid;
+	gap: var(--space-5);
+	max-width: 480px;
+}
+
+.form__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--space-3);
+}
+
+.confirm {
+	margin-top: var(--space-5);
+}
+
+.error-summary ul {
+	display: grid;
+	gap: var(--space-1);
+	margin: 0;
+	padding-left: var(--space-4);
+}
+
+.notice__title {
+	font-size: 14px;
+	line-height: 20px;
+}
+
+.input {
+	height: 32px;
+	padding: 0 var(--space-2);
+	border: 1px solid var(--line-control);
+	border-radius: var(--radius-control);
+	background: var(--bg);
+	color: var(--text);
+	font: 400 14px/20px var(--font-sans);
+}
+
+.input.id {
+	font-family: var(--font-mono);
+	font-size: 13px;
+}
+
+.choice {
+	display: grid;
+	grid-template-columns: 16px 1fr;
+	gap: 0 var(--space-2);
+	align-items: start;
+	padding: var(--space-1) 0;
+	cursor: pointer;
+}
+
+.choice input {
+	width: 16px;
+	height: 16px;
+	margin: 2px 0 0;
+	accent-color: var(--accent-strong);
+}
+
+.choice__hint {
+	grid-column: 2;
+	font-size: 12px;
+	line-height: 16px;
+	color: var(--text-muted);
+}
+
+/* Filter */
+
+.filter {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--space-2);
+	margin-bottom: var(--space-3);
+}
+
+.filter .field__label {
+	margin-right: var(--space-1);
+}
+
+.filter .input {
+	width: 220px;
+}
+
+/* Table */
+
+.table {
+	width: 100%;
+	border-collapse: collapse;
+	border: 1px solid var(--line);
+}
+
+.table th {
+	padding: var(--space-2) var(--space-3);
+	border-bottom: 1px solid var(--line);
+	background: var(--surface);
+	color: var(--text-muted);
+	font-size: 12px;
+	line-height: 16px;
+	font-weight: 600;
+	text-align: left;
+	white-space: nowrap;
+}
+
+.table td {
+	height: 36px;
+	padding: var(--space-2) var(--space-3);
+	border-bottom: 1px solid var(--line);
+	white-space: nowrap;
+	vertical-align: middle;
+}
+
+.table tbody tr {
+	transition: background-color 100ms;
+}
+
+.table tbody tr:hover {
+	background: var(--surface-hover);
+}
+
+.table .cell-description {
+	max-width: 0;
+	width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.table .cell-updated {
+	text-align: right;
+}
+
+.table__owner-below {
+	display: none;
+}
+
+.table-footer {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: var(--space-3);
+	margin-top: var(--space-3);
+}
+
+.pagination {
+	display: flex;
+	gap: var(--space-2);
+}
+
+/* A list with nothing in it: what's missing, and a way back. */
+.empty {
+	display: grid;
+	gap: var(--space-3);
+	justify-items: start;
+	padding: var(--space-6) var(--space-5);
+	border: 1px solid var(--line);
+}
+
+/* Links that aren't the row's main link: owners and repositories. */
+.secondary-link {
+	color: var(--text);
+}
+
+/* Lifecycle markers */
+
+.lifecycle {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--space-2);
+	white-space: nowrap;
+}
+
+.lifecycle svg {
+	width: 10px;
+	height: 10px;
+	flex: none;
+}
+
+.lifecycle--experimental svg {
+	color: var(--experimental);
+}
+
+.lifecycle--production svg {
+	color: var(--production);
+}
+
+.lifecycle--deprecated svg {
+	color: var(--deprecated);
+}
+
+/* Service summary */
+
+.summary {
+	display: grid;
+	grid-template-columns: repeat(4, max-content);
+	gap: var(--space-1) var(--space-6);
+}
+
+.summary div {
+	display: grid;
+	gap: var(--space-1);
+}
+
+.summary dt {
+	color: var(--text-muted);
+	font-size: 12px;
+	line-height: 16px;
+}
+
+/* Service path diagram */
+
+.path {
+	--connector: 40px;
+	display: grid;
+	grid-template-columns: minmax(170px, 0.8fr) minmax(250px, 1.2fr) minmax(330px, 1.7fr);
+	gap: var(--connector);
+	align-items: start;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.step {
+	position: relative;
+	display: grid;
+	gap: var(--space-3);
+	padding: var(--space-4);
+	border: 1px solid var(--line-control);
+}
+
+/* The connector into every step after the first: a line and an arrowhead. */
+.step + .step::before {
+	content: "";
+	position: absolute;
+	top: 26px;
+	left: calc(-1 * var(--connector) - 1px);
+	width: var(--connector);
+	height: 1px;
+	background: var(--line-control);
+}
+
+.step + .step::after {
+	content: "";
+	position: absolute;
+	top: 22px;
+	left: -10px;
+	width: 8px;
+	height: 8px;
+	border-top: 1px solid var(--line-control);
+	border-right: 1px solid var(--line-control);
+	transform: rotate(45deg);
+}
+
+.step__head {
+	display: grid;
+	gap: 2px;
+}
+
+.step__status {
+	color: var(--text-muted);
+}
+
+.step--next {
+	border-color: transparent;
+}
+
+/* A step the service hasn't reached yet: drawn faintly, and its text says what happens. */
+.step--later {
+	border-color: var(--line);
+}
+
+.path--even {
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+/* Empty catalog introduction */
+
+.intro {
+	display: grid;
+	gap: var(--space-5);
+}
+
+.intro__text {
+	display: grid;
+	gap: var(--space-1);
+	max-width: 64ch;
+}
+
+/* The next step's dashed outline is an SVG, so it can move while work is pending. */
+.step__outline {
+	position: absolute;
+	inset: -1px;
+	width: calc(100% + 2px);
+	height: calc(100% + 2px);
+	overflow: hidden;
+	pointer-events: none;
+}
+
+.step__outline rect {
+	width: 100%;
+	height: 100%;
+	fill: none;
+	stroke: var(--accent);
+	stroke-width: 2;
+	stroke-dasharray: 6 4;
+}
+
+[aria-busy="true"] .step__outline rect {
+	animation: march 1.2s linear infinite;
+}
+
+@keyframes march {
+	to {
+		stroke-dashoffset: -20;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	* {
+		animation: none !important;
+		transition: none !important;
+	}
+}
+
+.step__actions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--space-2) var(--space-3);
+}
+
+.step__options {
+	display: grid;
+	gap: var(--space-3);
+	padding-top: var(--space-3);
+	border-top: 1px solid var(--line);
+}
+
+.facts {
+	display: grid;
+	grid-template-columns: max-content 1fr;
+	gap: var(--space-1) var(--space-3);
+}
+
+.facts dt {
+	color: var(--text-muted);
+}
+
+.repo-link {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--space-2);
+}
+
+/* Notices */
+
+.notice {
+	display: grid;
+	grid-template-columns: 16px 1fr;
+	gap: var(--space-1) var(--space-2);
+	padding: var(--space-3);
+	border: 1px solid var(--line);
+	background: var(--surface);
+}
+
+.notice > .icon {
+	margin-top: 2px;
+}
+
+.notice__body {
+	display: grid;
+	gap: var(--space-1);
+}
+
+.notice--success {
+	border-color: var(--success);
+}
+
+.notice--success > .icon {
+	color: var(--success);
+}
+
+.notice--error {
+	border-color: var(--error);
+}
+
+.notice--error > .icon {
+	color: var(--error);
+}
+
+.page > .notice {
+	margin-bottom: var(--space-5);
+}
+
+/* Unregister */
+
+.unregister {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--space-3) var(--space-5);
+	padding-top: var(--space-5);
+	border-top: 1px solid var(--line);
+}
+
+.unregister__text {
+	display: grid;
+	gap: var(--space-1);
+	max-width: 60ch;
+}
+
+/* Narrow screens */
+
+@media (max-width: 640px) {
+	:root {
+		--gutter: var(--space-4);
+	}
+
+	.topbar__inner {
+		gap: var(--space-4);
+	}
+
+	.table .cell-description,
+	.table .cell-repository,
+	.table .cell-updated,
+	.table .cell-owner {
+		display: none;
+	}
+
+	.table td {
+		height: auto;
+	}
+
+	.table__owner-below {
+		display: block;
+		margin-top: 2px;
+	}
+
+	.filter .input {
+		flex: 1;
+		width: auto;
+		min-width: 0;
+	}
+
+	.summary {
+		grid-template-columns: repeat(2, minmax(0, max-content));
+		gap: var(--space-3) var(--space-6);
+	}
+
+	.path {
+		grid-template-columns: minmax(0, 1fr);
+		--connector: 32px;
+	}
+
+	.step + .step::before {
+		top: calc(-1 * var(--connector) - 1px);
+		left: 24px;
+		width: 1px;
+		height: var(--connector);
+	}
+
+	.step + .step::after {
+		top: -10px;
+		left: 20.5px;
+		transform: rotate(135deg);
+	}
+}

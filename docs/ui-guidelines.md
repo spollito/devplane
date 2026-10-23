@@ -109,6 +109,10 @@ apart.
   page has a primary action, such as "Register service" on the catalog, it sits to
   the right of the title, or wraps below it on narrow screens.
 - There is one breakpoint, at 640px. Pages must not scroll sideways at 390px.
+- Forms are at most 480px wide, with their buttons in a row below the last field:
+  the primary action first, then Cancel.
+- Pages without a mockup (the register form, the unregister confirmation, and the
+  error pages) are built from the components in this document.
 
 ### Motion
 

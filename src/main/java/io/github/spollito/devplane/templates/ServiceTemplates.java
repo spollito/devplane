@@ -22,6 +22,14 @@ public class ServiceTemplates {
 		return TEMPLATES;
 	}
 
+	/** The golden path, which the web UI names on its pages. */
+	public ServiceTemplate defaultTemplate() {
+		return TEMPLATES.stream()
+			.filter(template -> template.name().equals(DEFAULT))
+			.findFirst()
+			.orElseThrow(() -> new IllegalStateException("The default template " + DEFAULT + " isn't listed"));
+	}
+
 	boolean isListed(String name) {
 		return TEMPLATES.stream().anyMatch(template -> template.name().equals(name));
 	}

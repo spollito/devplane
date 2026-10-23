@@ -16,6 +16,9 @@ public final class CatalogConstraints {
 
 	public static final int MAX_DESCRIPTION_LENGTH = 300;
 
+	/** Replaces Bean Validation's "size must be between 0 and 300". */
+	static final String DESCRIPTION_MESSAGE = "must be at most " + MAX_DESCRIPTION_LENGTH + " characters";
+
 	private CatalogConstraints() {
 	}
 

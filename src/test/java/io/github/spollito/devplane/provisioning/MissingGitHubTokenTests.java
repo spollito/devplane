@@ -4,27 +4,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.net.URI;
 
+import io.github.spollito.devplane.NoGitHubTokenTest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
-import org.testcontainers.postgresql.PostgreSQLContainer;
-import org.testcontainers.utility.DockerImageName;
 
 /**
  * The "Provisioning needs a GitHub token" requirement. DevPlane runs here as it does
- * without {@code DEVPLANE_GITHUB_TOKEN}, so this test gets its own context instead
- * of the shared one with the fake GitHub. The empty property also overrides a token
- * set in the developer's environment.
+ * without {@code DEVPLANE_GITHUB_TOKEN}, so this test uses that context instead of
+ * the shared one with the fake GitHub.
  */
-@SpringBootTest(properties = "devplane.github.token=")
-@AutoConfigureMockMvc
+@NoGitHubTokenTest
 class MissingGitHubTokenTests {
 
 	@Autowired
@@ -32,6 +25,11 @@ class MissingGitHubTokenTests {
 
 	@Autowired
 	private GitHubProperties properties;
+
+	@BeforeEach
+	void removeOrdersApi() {
+		mvc.delete().uri("/api/v1/services/orders-api").exchange();
+	}
 
 	@Test
 	void reportsAMissingToken() {
@@ -55,17 +53,6 @@ class MissingGitHubTokenTests {
 	@Test
 	void defaultsToGitHubsApi() {
 		assertThat(properties.apiUrl()).isEqualTo(URI.create("https://api.github.com"));
-	}
-
-	@TestConfiguration(proxyBeanMethods = false)
-	static class DatabaseConfiguration {
-
-		@Bean
-		@ServiceConnection
-		PostgreSQLContainer postgresContainer() {
-			return new PostgreSQLContainer(DockerImageName.parse("postgres:18"));
-		}
-
 	}
 
 }

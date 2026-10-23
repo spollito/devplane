@@ -7,6 +7,6 @@ package io.github.spollito.devplane.templates;
  * how clients choose it
  * @param description what a project generated from the template is, in a few words
  */
-record ServiceTemplate(String name, String description) {
+public record ServiceTemplate(String name, String description) {
 
 }

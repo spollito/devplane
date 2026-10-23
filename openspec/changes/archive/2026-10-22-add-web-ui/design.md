@@ -218,7 +218,9 @@ repository step and keeps the chosen visibility selected.
 - **The 503 link:** a `detail` that comes from a 503 also shows the README link
   "How to create the token". The flash attributes carry the status for this.
 - **Sessions:** flash attributes live in the HTTP session. A session cookie is
-  created only when a flash attribute is set.
+  created only when a flash attribute is set. Sessions are tracked with the
+  cookie only (`server.servlet.session.tracking-modes=cookie`). Otherwise Tomcat
+  puts `;jsessionid=…` in the redirect URL of a browser that has no cookie yet.
 
 Alternative: showing the service page again from `RepositoryPages` with the
 failure's status was rejected. It would need a second copy of the service page's

@@ -33,26 +33,31 @@ io.github.spollito.devplane
 │                  repository
 ├── provisioning/  repository provisioning: the endpoint that gives a service its
 │                  GitHub repository, GitHubClient, and ProjectPusher (Git push)
-└── templates/     service templates: ProjectGenerator, which generates new service
-                   projects, ProjectArchiver, which zips them, and the endpoints
-                   that list templates and download a service's project
+├── templates/     service templates: ProjectGenerator, which generates new service
+│                  projects, ProjectArchiver, which zips them, and the endpoints
+│                  that list templates and download a service's project
+└── web/           the web UI: page controllers, page error handling, and the view
+                   records and time formatting their templates use
 ```
 
 Dependencies between feature packages point one way: `templates` uses `catalog`,
-and `provisioning` uses both. `catalog` depends on neither.
+and `provisioning` uses both. `web` uses all three, because a service's page shows
+catalog data, its template, and its repository form together. Nothing depends on
+`web`, and `catalog` depends on none of the others.
 
 A request flows from the controller, which validates its body, to
 `ServiceCatalog`, then through a Spring Data JPA repository to PostgreSQL.
 Every error becomes an RFC 9457 problem details response in
 `api/ApiExceptionHandler`.
 
-Other features read the catalog through `ServiceCatalog.lookUp(name)`, which
-returns a read-only `RegisteredService` (name, owner, description, and repository)
-and throws a 404 error for an unknown name. The one change they can make is
-`ServiceCatalog.recordRepository(name, url, template)`, which stores a service's
-GitHub repository once it exists. Everything else in the `catalog` package,
-including the JPA entity, stays package-private, so only the catalog changes
-services.
+Other features change services only through `ServiceCatalog`, and see them as the
+read-only `RegisteredService` (name, owner, description, lifecycle, timestamps,
+and repository). Its public methods are `register`, `lookUp`, `list`, and
+`unregister`, called by the REST controllers and the web UI, and
+`recordRepository(name, url, template)`, which provisioning calls once a
+service's GitHub repository exists. An unknown name throws a 404 error. The JPA
+entity and the Spring Data repository stay package-private and never leave
+`ServiceCatalog`, so every change runs the catalog's rules.
 
 The API is described at `/v3/api-docs` (browsable at `/swagger-ui.html`), and
 `/actuator/health` reports whether the application can reach its database.
@@ -139,9 +144,54 @@ in order:
 The provisioner isn't transactional: each catalog call has its own transaction,
 so none stays open while DevPlane waits for GitHub.
 
+Git writes pack files read-only, and Windows refuses to delete read-only files, so
+the provisioner makes the temporary directory's files writable before deleting it.
+
 The token comes from the `DEVPLANE_GITHUB_TOKEN` environment variable (bound to
 `devplane.github.token`), and `devplane.github.api-url` defaults to
 `https://api.github.com`. DevPlane starts without a token, and the token never
 appears in logs, responses, or the pushed repository. Tests point `api-url` at
 `FakeGitHub`, a small HTTP server in the test JVM that creates bare Git
 repositories, so neither CI nor contributors need a token.
+
+### Web UI
+
+DevPlane serves its web pages from the same address as the API. Pages are
+Thymeleaf templates in `src/main/resources/templates/`, rendered on the server by
+the controllers in the `web` package, and every action is a plain link or HTML
+form, so the UI works with JavaScript turned off. htmx, served from a WebJar, makes
+two interactions smoother when JavaScript is on. There's no frontend build step:
+`static/css/devplane.css` is plain CSS with the design values from
+`docs/ui-guidelines.md`, and the fonts in `static/fonts/` are served by DevPlane
+itself, so pages work offline.
+
+- `layout.html` holds the fragments every page shares: the head, the "Skip to
+  content" link and top bar, and the notice shown after a redirect.
+  `fragments/` holds the icons (from Lucide) and the lifecycle marker.
+- `PageTimes` formats times: exact times ("Oct 21, 2026, 16:40") in the JVM's time
+  zone, and relative times ("Yesterday") from the application's `Clock`, so tests
+  control them.
+- `GET /` redirects to the catalog at `/services`.
+
+Errors take one of three paths:
+
+| Where the error happens | Who handles it | Result |
+| --- | --- | --- |
+| In a page controller, or the request check before it | `web.PageExceptionHandler`, which applies only to the `web` package and runs first | An unknown service renders `error/4xx` with "No service named `x`" and 404. Another 4xx renders `error/4xx`, with the detail only when DevPlane wrote it. Anything else is logged and renders `error/5xx`, which shows no exception. |
+| Outside any controller and outside `/api/`, such as an unknown path | `ApiExceptionHandler`, which calls `response.sendError` for paths that don't start with `/api/` | Spring Boot's error controller renders `templates/error/4xx.html` or `5xx.html` |
+| Under `/api/` | `ApiExceptionHandler` | Problem details, whatever the `Accept` header |
+
+DevPlane has no login, so any website open in the developer's browser could send
+it requests. `api.CrossSiteRequestInterceptor` checks every `POST`, `PUT`,
+`PATCH`, and `DELETE`, for pages and the API alike, and refuses with 403 any that
+a browser sends from another site, before the controller runs:
+
+- The browser's `Sec-Fetch-Site` header decides first. `same-origin` and `none`
+  pass; `cross-site` and `same-site` don't, because another app on `localhost`
+  counts as the same site.
+- Without that header, the `Origin` header must match DevPlane's own address
+  (`WebUtils.isSameOrigin`).
+- Requests with neither header, such as from curl and scripts, pass.
+
+The refusal is a `CrossSiteRequestException`, so the API answers with problem
+details and pages with the HTML 403 page.

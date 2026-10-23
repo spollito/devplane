@@ -30,7 +30,9 @@ class LookUpServiceTests {
 	@Test
 	void looksUpARegisteredService() {
 		assertThat(catalog.lookUp("orders-api"))
-			.isEqualTo(new RegisteredService("orders-api", "payments-team", "Order management REST API", null));
+			.isEqualTo(new RegisteredService("orders-api", "payments-team", "Order management REST API",
+					Lifecycle.PRODUCTION, Instant.parse("2026-02-10T08:15:00Z"), Instant.parse("2026-02-10T08:15:00Z"),
+					null));
 	}
 
 	@Test

@@ -6,20 +6,21 @@ import jakarta.validation.constraints.Pattern;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Body of {@code POST /api/v1/services/{name}/repository}. Both fields are
- * optional, and so is the body itself. {@code visibility} is a string so that an
- * unknown value is reported as a field error.
+ * Body of {@code POST /api/v1/services/{name}/repository}, and the fields of the web
+ * UI's repository form. Both fields are optional, and so is the body itself.
+ * {@code visibility} is a string so that an unknown value is reported as a field
+ * error.
  */
-record ProvisionRepositoryRequest(@ListedTemplate @Nullable String template,
+public record ProvisionRepositoryRequest(@ListedTemplate @Nullable String template,
 		@Pattern(regexp = "private|public", message = "must be private or public") @Nullable String visibility) {
 
 	static final ProvisionRepositoryRequest DEFAULTS = new ProvisionRepositoryRequest(null, null);
 
-	String templateOrDefault() {
+	public String templateOrDefault() {
 		return (template != null) ? template : ServiceTemplates.DEFAULT;
 	}
 
-	boolean isPrivate() {
+	public boolean isPrivate() {
 		return !"public".equals(visibility);
 	}
 

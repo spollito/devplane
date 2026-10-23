@@ -1,0 +1,31 @@
+<!doctype html>
+<!--/*
+	The page for a request DevPlane can't answer. PageExceptionHandler renders it with
+	missingService for an unknown service, or with DevPlane's own detail. Spring Boot's
+	error controller renders it for an unknown path, with status and path.
+*/-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+		th:with="heading=${missingService != null} ? 'No service named ' + ${missingService}
+				: (${status == 404} ? 'Page not found' : (${status == 403} ? 'Request refused' : 'Request not completed'))">
+<head th:replace="~{layout :: head(${heading})}"></head>
+<body>
+	<th:block th:replace="~{layout :: topbar('')}"></th:block>
+
+	<main id="main" class="page">
+		<div class="page-header">
+			<div class="page-header__text">
+				<h1 th:if="${missingService != null}">No service named <span class="id" th:text="${missingService}">orders-api</span></h1>
+				<h1 th:unless="${missingService != null}" th:text="${heading}">Page not found</h1>
+			</div>
+		</div>
+
+		<div class="prose">
+			<p th:if="${missingService != null}">No service by that name is registered. It may have been unregistered.</p>
+			<p th:if="${missingService == null and detail != null}" th:text="${detail}">DevPlane's detail</p>
+			<p th:if="${missingService == null and detail == null and status == 404}">DevPlane has no page at this address.</p>
+			<p th:if="${missingService == null and detail == null and status != 404}">DevPlane couldn't complete this request.</p>
+			<p><a th:href="@{/services}">Go to Services</a></p>
+		</div>
+	</main>
+</body>
+</html>

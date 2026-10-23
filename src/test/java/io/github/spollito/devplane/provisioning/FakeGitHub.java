@@ -16,6 +16,7 @@ import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
@@ -118,7 +119,7 @@ public final class FakeGitHub implements AutoCloseable {
 		failure = null;
 		brokenPushes = false;
 		try {
-			FileSystemUtils.deleteRecursively(root);
+			delete(root);
 			Files.createDirectories(root);
 		}
 		catch (IOException ex) {
@@ -129,7 +130,20 @@ public final class FakeGitHub implements AutoCloseable {
 	@Override
 	public void close() throws IOException {
 		server.stop(0);
-		FileSystemUtils.deleteRecursively(root);
+		delete(root);
+	}
+
+	/**
+	 * Git writes pack files read-only, and Windows refuses to delete a read-only
+	 * file, so they're made writable first.
+	 */
+	private static void delete(Path directory) throws IOException {
+		if (Files.exists(directory)) {
+			try (Stream<Path> paths = Files.walk(directory)) {
+				paths.forEach(path -> path.toFile().setWritable(true));
+			}
+		}
+		FileSystemUtils.deleteRecursively(directory);
 	}
 
 	private void handle(HttpExchange exchange) throws IOException {

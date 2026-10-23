@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.stream.Stream;
 
 import io.github.spollito.devplane.catalog.RegisteredService;
 import io.github.spollito.devplane.catalog.ServiceCatalog;
@@ -24,7 +25,7 @@ import org.springframework.util.FileSystemUtils;
  * none stays open while DevPlane waits for GitHub.
  */
 @Service
-class RepositoryProvisioner {
+public class RepositoryProvisioner {
 
 	private static final Logger log = LoggerFactory.getLogger(RepositoryProvisioner.class);
 
@@ -58,7 +59,7 @@ class RepositoryProvisioner {
 	 * with the service's name
 	 * @throws GitHubException if GitHub or the push fails
 	 */
-	SourceRepository provision(String name, String template, boolean isPrivate) {
+	public SourceRepository provision(String name, String template, boolean isPrivate) {
 		RegisteredService service = catalog.lookUp(name);
 		if (service.repository() != null) {
 			throw new RepositoryAlreadyProvisionedException(name, service.repository().url());
@@ -94,6 +95,11 @@ class RepositoryProvisioner {
 
 	private static void delete(Path directory) {
 		try {
+			// Git writes pack files read-only, and Windows refuses to delete a read-only
+			// file, so they're made writable first.
+			try (Stream<Path> paths = Files.walk(directory)) {
+				paths.forEach(path -> path.toFile().setWritable(true));
+			}
 			FileSystemUtils.deleteRecursively(directory);
 		}
 		catch (IOException ex) {

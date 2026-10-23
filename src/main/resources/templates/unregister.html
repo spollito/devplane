@@ -1,0 +1,42 @@
+<!doctype html>
+<!--/*
+	The confirmation before unregistering: what will happen, and what won't. It's a
+	page rather than a dialog, so it works without script.
+*/-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head('Unregister ' + ${service.name})}"></head>
+<body>
+	<th:block th:replace="~{layout :: topbar('services')}"></th:block>
+
+	<main id="main" class="page">
+		<nav class="breadcrumbs" aria-label="Breadcrumbs">
+			<ol>
+				<li><a th:href="@{/services}">Services</a></li>
+				<li><a class="id" th:href="@{/services/{name}(name=${service.name})}" th:text="${service.name}">orders-api</a></li>
+				<li><span aria-current="page">Unregister</span></li>
+			</ol>
+		</nav>
+
+		<div class="page-header">
+			<div class="page-header__text">
+				<h1>Unregister <span class="id" th:text="${service.name}">orders-api</span>?</h1>
+			</div>
+		</div>
+
+		<div class="prose">
+			<p><span class="id" th:text="${service.name}">orders-api</span> will be removed from the catalog, with its
+				owner, description, and lifecycle stage.</p>
+			<p th:if="${service.repository != null}">Its repository <span class="id"
+					th:text="${service.repository.fullName}">octo-dev/orders-api</span> stays on GitHub. Delete it there if
+				you no longer need it.</p>
+			<p th:unless="${service.repository != null}">It doesn't have a GitHub repository.</p>
+		</div>
+
+		<form class="form__actions confirm" th:action="@{/services/{name}/unregister(name=${service.name})}" method="post">
+			<button class="button button--danger" type="submit">Unregister <span class="id"
+					th:text="${service.name}">orders-api</span></button>
+			<a class="button" th:href="@{/services/{name}(name=${service.name})}">Cancel</a>
+		</form>
+	</main>
+</body>
+</html>

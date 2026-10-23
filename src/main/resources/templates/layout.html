@@ -1,0 +1,38 @@
+<!doctype html>
+<!--/* Fragments every page shares: the head, the top bar, and the notice area. */-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(title)">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title th:text="${title} + ' · DevPlane'">DevPlane</title>
+	<link rel="stylesheet" th:href="@{/css/devplane.css}">
+	<script th:src="@{/webjars/htmx.org/dist/htmx.min.js}" defer></script>
+</head>
+<body>
+	<!--/* The skip link and the top bar. current is "services" on the catalog's pages. */-->
+	<th:block th:fragment="topbar(current)">
+		<a class="skip-link" href="#main">Skip to content</a>
+		<header class="topbar">
+			<div class="topbar__inner">
+				<a class="wordmark" th:href="@{/services}">
+					<svg th:replace="~{fragments/icons :: wordmark}"></svg>
+					DevPlane
+				</a>
+				<nav class="nav" aria-label="Main">
+					<a th:href="@{/services}" th:attr="aria-current=${current == 'services'} ? 'page'">Services</a>
+				</nav>
+				<nav class="nav nav--end" aria-label="Documentation">
+					<a th:href="@{/swagger-ui.html}">API docs</a>
+				</nav>
+			</div>
+		</header>
+	</th:block>
+
+	<!--/* A success notice after a redirect, from the "notice" flash attribute. */-->
+	<div th:fragment="notice" th:if="${notice != null}" class="notice notice--success" role="status">
+		<svg th:replace="~{fragments/icons :: success}"></svg>
+		<p><th:block th:text="${notice.lead}"></th:block><span class="id" th:text="${notice.id}"></span><th:block
+				th:text="${notice.trail}"></th:block></p>
+	</div>
+</body>
+</html>

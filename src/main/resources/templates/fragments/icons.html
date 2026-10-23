@@ -1,0 +1,30 @@
+<!doctype html>
+<!--
+	Icons from Lucide (https://lucide.dev), except the DevPlane wordmark.
+
+	ISC License. Copyright (c) for portions of Lucide are held by Cole Bemis
+	2013-2022 as part of Feather (MIT). All other copyright (c) for Lucide are held
+	by Lucide Contributors 2022.
+
+	Permission to use, copy, modify, and/or distribute this software for any purpose
+	with or without fee is hereby granted, provided that the above copyright notice
+	and this permission notice appear in all copies.
+-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+	<!--/* DevPlane's wordmark: three stacked planes. */-->
+	<svg th:fragment="wordmark" viewBox="0 0 18 18" aria-hidden="true"><path d="M9 2.5 16 6 9 9.5 2 6Z"/><path d="M2 9 9 12.5 16 9"/><path d="M2 12 9 15.5 16 12"/></svg>
+
+	<!--/* Lucide external-link */-->
+	<svg th:fragment="external" class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+
+	<!--/* Lucide download */-->
+	<svg th:fragment="download" class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>
+
+	<!--/* Lucide circle-check */-->
+	<svg th:fragment="success" class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+
+	<!--/* Lucide circle-alert */-->
+	<svg th:fragment="error" class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
+</body>
+</html>

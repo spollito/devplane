@@ -11,7 +11,8 @@ import jakarta.validation.constraints.Size;
 record UpdateServiceRequest(
 		@NotNull @Pattern(regexp = CatalogConstraints.IDENTIFIER_PATTERN,
 				message = CatalogConstraints.IDENTIFIER_MESSAGE) String owner,
-		@Size(max = CatalogConstraints.MAX_DESCRIPTION_LENGTH) String description,
+		@Size(max = CatalogConstraints.MAX_DESCRIPTION_LENGTH,
+				message = CatalogConstraints.DESCRIPTION_MESSAGE) String description,
 		@NotNull @Pattern(regexp = Lifecycle.API_VALUE_PATTERN,
 				message = CatalogConstraints.LIFECYCLE_MESSAGE) String lifecycle) {
 

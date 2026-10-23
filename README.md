@@ -43,7 +43,7 @@ Items marked *stretch* are optional extras once the rest of their phase works.
 - [x] Golden-path service template: Java REST API with PostgreSQL
 - [x] Service creation workflow: generate a new service from the template
 - [x] Repository provisioning: push the generated service to a new GitHub repository
-- [ ] Web UI for browsing the catalog and creating services
+- [x] Web UI for browsing the catalog and creating services
 
 ### Phase 2 — Deployment
 - [ ] Containerization: generated services include a Dockerfile
@@ -99,6 +99,21 @@ http://localhost:8080/swagger-ui.html.
 `./gradlew bootRun` from that directory.
 
 ## Creating a Service
+
+### Using the web UI
+
+After `./gradlew bootRun`, open http://localhost:8080 in a browser:
+
+1. Press **Register service**, and enter the service's name, owner, and lifecycle
+   stage.
+2. On the service's page, press **Download project** for a zip of its generated
+   project.
+3. With a GitHub token set (see [Push it to GitHub](#push-it-to-github)), choose
+   private or public and press **Create repository**.
+
+Every page works with JavaScript turned off.
+
+### Using the API
 
 With DevPlane running, register a service in the catalog, then download the
 project DevPlane generates for it:

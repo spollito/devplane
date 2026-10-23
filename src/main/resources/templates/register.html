@@ -1,0 +1,105 @@
+<!doctype html>
+<!--/*
+	The register form. errors maps each invalid field to its message, in the form's
+	order, and duplicateName is set when the name is taken. When there are errors, the
+	summary at the top takes focus without script, through autofocus.
+*/-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+		th:with="hasErrors=${!errors.isEmpty() or duplicateName != null}">
+<head th:replace="~{layout :: head('Register service')}"></head>
+<body>
+	<th:block th:replace="~{layout :: topbar('services')}"></th:block>
+
+	<main id="main" class="page">
+		<nav class="breadcrumbs" aria-label="Breadcrumbs">
+			<ol>
+				<li><a th:href="@{/services}">Services</a></li>
+				<li><span aria-current="page">Register service</span></li>
+			</ol>
+		</nav>
+
+		<div class="page-header">
+			<div class="page-header__text">
+				<h1>Register service</h1>
+				<p class="muted">Add a service to the catalog. You can download its project and create its repository
+					from its page.</p>
+			</div>
+		</div>
+
+		<form class="form" th:action="@{/register}" method="post" th:object="${form}" novalidate>
+			<div th:if="${hasErrors}" class="notice notice--error error-summary" id="error-summary" tabindex="-1" autofocus>
+				<svg th:replace="~{fragments/icons :: error}"></svg>
+				<div class="notice__body">
+					<h2 class="notice__title">Some fields need changes</h2>
+					<ul>
+						<li th:if="${duplicateName != null}"><a href="#name">A service named <span class="id"
+								th:text="${duplicateName}">orders-api</span> already exists</a></li>
+						<li th:each="error : ${errors}"><a th:href="${'#' + error.key}" th:text="${error.value}">Name must be…</a></li>
+					</ul>
+				</div>
+			</div>
+
+			<div class="field">
+				<label class="field__label" for="name">Name</label>
+				<p class="field__hint" id="name-hint">Lowercase letters, digits, and hyphens. Starts with a letter. Can't be
+					changed later.</p>
+				<p th:if="${duplicateName != null}" class="field__error" id="name-error">A service named <a
+						th:href="@{/services/{name}(name=${duplicateName})}"><span class="id"
+						th:text="${duplicateName}">orders-api</span></a> already exists</p>
+				<p th:if="${errors.containsKey('name')}" class="field__error" id="name-error" th:text="${errors.name}">Name must be…</p>
+				<input class="input id" id="name" name="name" type="text" autocomplete="off" spellcheck="false"
+						th:value="*{name}"
+						th:attr="aria-invalid=${errors.containsKey('name') or duplicateName != null} ? 'true',
+								aria-describedby=${errors.containsKey('name') or duplicateName != null} ? 'name-hint name-error' : 'name-hint'">
+			</div>
+
+			<div class="field">
+				<label class="field__label" for="owner">Owner</label>
+				<p class="field__hint" id="owner-hint">The team that owns the service, written the same way as a name.</p>
+				<p th:if="${errors.containsKey('owner')}" class="field__error" id="owner-error" th:text="${errors.owner}">Enter the team…</p>
+				<input class="input id" id="owner" name="owner" type="text" autocomplete="off" spellcheck="false"
+						th:value="*{owner}"
+						th:attr="aria-invalid=${errors.containsKey('owner')} ? 'true',
+								aria-describedby=${errors.containsKey('owner')} ? 'owner-hint owner-error' : 'owner-hint'">
+			</div>
+
+			<div class="field">
+				<label class="field__label" for="description">Description (optional)</label>
+				<p class="field__hint" id="description-hint">What the service does, in up to 300 characters.</p>
+				<p th:if="${errors.containsKey('description')}" class="field__error" id="description-error"
+						th:text="${errors.description}">Description must be…</p>
+				<input class="input" id="description" name="description" type="text" autocomplete="off"
+						th:value="*{description}"
+						th:attr="aria-invalid=${errors.containsKey('description')} ? 'true',
+								aria-describedby=${errors.containsKey('description')} ? 'description-hint description-error' : 'description-hint'">
+			</div>
+
+			<fieldset class="field" th:attr="aria-describedby=${errors.containsKey('lifecycle')} ? 'lifecycle-error'">
+				<legend class="field__label">Lifecycle</legend>
+				<p th:if="${errors.containsKey('lifecycle')}" class="field__error" id="lifecycle-error"
+						th:text="${errors.lifecycle}">Lifecycle must be…</p>
+				<label class="choice">
+					<input type="radio" name="lifecycle" value="experimental" th:checked="*{lifecycle == null or lifecycle == 'experimental'}">
+					<span>Experimental</span>
+					<span class="choice__hint">Still being built or tried out.</span>
+				</label>
+				<label class="choice">
+					<input type="radio" name="lifecycle" value="production" th:checked="*{lifecycle == 'production'}">
+					<span>Production</span>
+					<span class="choice__hint">Built and in use.</span>
+				</label>
+				<label class="choice">
+					<input type="radio" name="lifecycle" value="deprecated" th:checked="*{lifecycle == 'deprecated'}">
+					<span>Deprecated</span>
+					<span class="choice__hint">Being retired. New work should use something else.</span>
+				</label>
+			</fieldset>
+
+			<div class="form__actions">
+				<button class="button button--primary" type="submit">Register service</button>
+				<a class="button" th:href="@{/services}">Cancel</a>
+			</div>
+		</form>
+	</main>
+</body>
+</html>

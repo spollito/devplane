@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+	<!--/*
+		A lifecycle marker: a 10px square whose shape, not only its color, tells the
+		stages apart. stage is "experimental", "production", or "deprecated".
+	*/-->
+	<span th:fragment="lifecycle(stage)" class="lifecycle" th:classappend="${'lifecycle--' + stage}">
+		<svg th:if="${stage == 'production'}" viewBox="0 0 10 10" aria-hidden="true"><rect width="10" height="10" fill="currentColor"/></svg>
+		<svg th:if="${stage == 'experimental'}" viewBox="0 0 10 10" aria-hidden="true"><rect x="1" y="1" width="8" height="8" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+		<svg th:if="${stage == 'deprecated'}" viewBox="0 0 10 10" aria-hidden="true"><rect x="1" y="1" width="8" height="8" fill="none" stroke="currentColor" stroke-width="2"/><path d="M1.5 8.5 8.5 1.5" stroke="currentColor" stroke-width="1.5"/></svg>
+		<th:block th:text="${#strings.capitalize(stage)}">Experimental</th:block>
+	</span>
+</body>
+</html>

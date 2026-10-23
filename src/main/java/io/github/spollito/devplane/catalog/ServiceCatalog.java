@@ -16,8 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * The catalog's business rules: registering services and keeping their details.
  * <p>
- * Other features read services through {@link #lookUp}. Every other method stays
- * package-private, so only the catalog changes services.
+ * Other features change services only through this class, and see them as the
+ * read-only {@link RegisteredService}. The JPA entity never leaves it.
  */
 @Service
 @Transactional
@@ -39,11 +39,12 @@ public class ServiceCatalog {
 	 * Registers a new service, defaulting its lifecycle to experimental.
 	 * @throws DuplicateServiceNameException if a service with this name exists
 	 */
-	ServiceEntity register(String name, String owner, @Nullable String description, @Nullable Lifecycle lifecycle) {
+	public RegisteredService register(String name, String owner, @Nullable String description,
+			@Nullable Lifecycle lifecycle) {
 		ServiceEntity service = new ServiceEntity(name, owner, description,
 				(lifecycle != null) ? lifecycle : Lifecycle.EXPERIMENTAL, now());
 		try {
-			return repository.saveAndFlush(service);
+			return RegisteredService.from(repository.saveAndFlush(service));
 		}
 		catch (DataIntegrityViolationException ex) {
 			// The name's unique constraint is the only one an insert can violate, and
@@ -89,25 +90,28 @@ public class ServiceCatalog {
 
 	/** Lists services one page at a time, optionally only those with the given owner. */
 	@Transactional(readOnly = true)
-	Page<ServiceEntity> list(@Nullable String owner, Pageable pageable) {
-		return (owner != null) ? repository.findByOwner(owner, pageable) : repository.findAll(pageable);
+	public Page<RegisteredService> list(@Nullable String owner, Pageable pageable) {
+		Page<ServiceEntity> services = (owner != null) ? repository.findByOwner(owner, pageable)
+				: repository.findAll(pageable);
+		return services.map(RegisteredService::from);
 	}
 
 	/**
 	 * Replaces a service's owner, description, and lifecycle. The name never changes.
 	 * @throws ServiceNotFoundException if no service has this name
 	 */
-	ServiceEntity update(String name, String owner, @Nullable String description, Lifecycle lifecycle) {
+	RegisteredService update(String name, String owner, @Nullable String description, Lifecycle lifecycle) {
 		ServiceEntity service = get(name);
 		service.update(owner, description, lifecycle, now());
-		return service;
+		return RegisteredService.from(service);
 	}
 
 	/**
-	 * Removes a service from the catalog.
+	 * Removes a service from the catalog. Its GitHub repository, if any, stays on
+	 * GitHub.
 	 * @throws ServiceNotFoundException if no service has this name
 	 */
-	void unregister(String name) {
+	public void unregister(String name) {
 		repository.delete(get(name));
 	}
 

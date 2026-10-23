@@ -94,9 +94,14 @@ class RegisterServiceTests {
 	void rejectsAnOverlongDescription() {
 		String description = "x".repeat(301);
 
-		assertInvalidField(register("""
+		MvcTestResult result = register("""
 				{"name": "orders-api", "owner": "payments-team", "description": "%s"}
-				""".formatted(description)), "description");
+				""".formatted(description));
+
+		assertInvalidField(result, "description");
+		assertThat(result).bodyJson()
+			.extractingPath("$.errors[0].message")
+			.isEqualTo("must be at most 300 characters");
 	}
 
 	// Service names and owners are DNS-safe identifiers

@@ -1,0 +1,58 @@
+<!doctype html>
+<!--/*
+	The service path diagram: a service's steps from catalog entry to project to
+	repository, drawn as connected boxes. Steps are list items, so a later phase can
+	add one. See "Service path diagram" in docs/ui-guidelines.md.
+*/-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+	<!--/* The next step's dashed outline. It's an SVG so it can move while work is pending. */-->
+	<svg th:fragment="outline" class="step__outline" aria-hidden="true"><rect/></svg>
+
+	<!--/*
+		Why the repository wasn't created, inside the repository step. reason is
+		DevPlane's own detail, and status the failure's status: a 503 means no token.
+	*/-->
+	<div th:fragment="repositoryError(reason, status)" class="notice notice--error" role="alert">
+		<svg th:replace="~{fragments/icons :: error}"></svg>
+		<div class="notice__body">
+			<p><strong>Couldn't create the repository</strong></p>
+			<p th:text="${reason}">GitHub isn't configured.</p>
+			<p th:if="${status == 503}"><a href="https://github.com/spollito/devplane#push-it-to-github">How to create
+					the token</a></p>
+		</div>
+	</div>
+
+	<!--/*
+		The empty catalog's introduction: the steps before any service exists, with
+		"Catalog entry" as the next step. template is the default ServiceTemplate.
+	*/-->
+	<ol th:fragment="intro(template)" class="path path--even">
+		<li class="step step--next">
+			<svg th:replace="~{fragments/path :: outline}"></svg>
+			<div class="step__head">
+				<h3>Catalog entry</h3>
+				<p class="step__status">Register the service with its name, owner, and lifecycle stage.</p>
+			</div>
+			<div class="step__actions">
+				<a class="button button--primary" th:href="@{/register}">Register service</a>
+			</div>
+		</li>
+		<li class="step step--later">
+			<div class="step__head">
+				<h3>Project</h3>
+				<p class="step__status">Download a project generated from <span class="id"
+						th:text="${template.name}">java-rest-api</span>, a <th:block
+						th:text="${template.description}">Spring Boot (Java 21) REST API with PostgreSQL</th:block>.</p>
+			</div>
+		</li>
+		<li class="step step--later">
+			<div class="step__head">
+				<h3>Repository</h3>
+				<p class="step__status">DevPlane creates a GitHub repository and pushes the project as its first commit.
+					This needs a GitHub token.</p>
+			</div>
+		</li>
+	</ol>
+</body>
+</html>
