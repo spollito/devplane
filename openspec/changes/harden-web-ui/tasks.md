@@ -59,7 +59,7 @@
   390px, using the longest valid data, including "The longest valid names". Check keyboard
   focus on a control and on each notice. Measure `scrollWidth` on each page. Fix what the
   check finds.
-- [ ] 5.3 Run `./gradlew build` and `openspec validate --all --strict`, and confirm CI
+- [x] 5.3 Run `./gradlew build` and `openspec validate --all --strict`, and confirm CI
   passes on the pull request. This change completes no roadmap item, so no box is ticked.
 
 ## Workflow follow-up
