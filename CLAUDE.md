@@ -58,5 +58,6 @@ Rules:
   pull request descriptions have no `Co-Authored-By` trailer and no "Generated
   with Claude Code" footer.
 - Work on a branch named after the change (for example `add-web-ui`), and open a
-  pull request. The repository owner merges pull requests.
+  pull request. Anyone with write access can merge pull requests, including their
+  own.
 - Commit or push only when asked.
