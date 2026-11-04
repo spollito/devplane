@@ -77,9 +77,10 @@ These four steps are all there is. Monospace runs wider than the sans, so it's s
 1px smaller than the text around it (13px in body text, 19px in a title), and
 never below 12px. Put the monospace class on an inline element inside the heading
 or cell, not on the heading itself, so "1px smaller" is measured from the right
-size. Identifiers never wrap inside a sentence or a cell, because a name split at
-its hyphen reads as two names. A page title may wrap a long name. Body text lines
-stay under 80 characters.
+size. An identifier stays on one line when it fits its container, because a name
+split at its hyphen reads as two names, and breaks only when it doesn't: a valid
+name can be 63 characters. Identifiers are shown in full, never cut off. Body text
+lines stay under 80 characters.
 
 ### Spacing
 
@@ -104,11 +105,12 @@ apart.
 - A 48px top bar holds the `DevPlane` wordmark, the navigation (`Services`), and an
   `API docs` link to `/swagger-ui.html` on the right.
 - Content sits in one left-aligned column, at most 1120px wide, with 24px side
-  padding (16px below 640px).
+  padding (16px below 960px).
 - Each page starts with breadcrumbs (except the catalog) and the page title. If the
   page has a primary action, such as "Register service" on the catalog, it sits to
   the right of the title, or wraps below it on narrow screens.
-- There is one breakpoint, at 640px. Pages must not scroll sideways at 390px.
+- There is one breakpoint, at 960px. Pages must not scroll sideways or overlap at
+  any width from 320px up, with the longest valid names.
 - Forms are at most 480px wide, with their buttons in a row below the last field:
   the primary action first, then Cancel.
 - Pages without a mockup (the register form, the unregister confirmation, and the
@@ -145,7 +147,8 @@ next to a text label, and icons are hidden from screen readers with
 | Link | `--accent` text, underlined on hover and focus | Navigation, a table row's main link, and links within text |
 | Secondary link | `--text`, underlined on hover and focus | Other links in a table row or summary, such as owners and repositories |
 
-- Buttons are 32px tall, with 12px side padding and a 14px label at weight 600.
+- Buttons are at least 32px tall, growing only when a label has to wrap, with 12px
+  side padding and a 14px label at weight 600.
 - A page or region has at most one primary button.
 - A table row has one `--accent` link, its name, so the row's main link stands
   out. Other links in the row are secondary links.
@@ -201,7 +204,9 @@ status icon and one or two sentences.
   after a redirect, such as "Registered `orders-api`."
 - **Error** (`role="alert"`, `--error` border): appears where the failed action was.
 
-Notices stay until the page changes. They don't time out.
+A notice that reports an action's result takes keyboard focus, with `tabindex="-1"`
+and `autofocus`, so the next Tab continues from the result. Notices stay until the
+page changes. They don't time out.
 
 ### Tables
 
@@ -209,19 +214,21 @@ The catalog list is a real `<table>` with `<th scope="col">` headers.
 
 - **Header row:** `--surface` background, 12px `--text-muted`, weight 600, sentence
   case.
-- **Body rows:** 36px tall, divided by 1px `--line`, with a `--surface-hover`
-  background on hover. Only the links inside a row are clickable, not the row
-  itself.
-- **Columns:** Name, Description, Owner, Lifecycle, Repository, and Updated.
-  - **Name** links to the service.
-  - **Description** is cut to one line with an ellipsis, and the full text is in
-    its `title`.
-  - **Owner** links to the list filtered by that owner.
-  - **Repository** shows `owner/name`, linked to GitHub, or "None" in
+- **Body rows:** 36px tall, and taller only when a long identifier wraps, divided by
+  1px `--line`, with a `--surface-hover` background on hover. Only the links inside a
+  row are clickable, not the row itself.
+- **Columns:** Name, Description, Owner, Lifecycle, Repository, and Updated, with
+  fixed widths so that a long identifier wraps in its own column.
+  - **Name** (24%) links to the service.
+  - **Description** (the remaining width) is cut to one line with an ellipsis, and
+    the full text is in its `title`.
+  - **Owner** (14%) links to the list filtered by that owner.
+  - **Lifecycle** (132px) shows the stage's marker and name.
+  - **Repository** (18%) shows `owner/name`, linked to GitHub, or "None" in
     `--text-muted`.
-  - **Updated** is relative ("2 days ago") in a `<time>` element, with the exact
-    date and time in its `title`.
-- **Below 640px,** Description, Repository, and Updated are hidden, and the owner
+  - **Updated** (120px) is relative ("2 days ago") in a `<time>` element, with the
+    exact date and time in its `title`.
+- **Below 960px,** Description, Repository, and Updated are hidden, and the owner
   moves under the name.
 - **Paging:** "21–40 of 57" on the left and Previous and Next on the right, hidden
   when everything fits on one page.
@@ -260,7 +267,7 @@ Rules:
   - **Not reached yet:** a solid `--line` border. Its text says what will happen,
     so the faint border carries no meaning on its own.
 - Steps connect with a 1px arrow, left to right, and stack top to bottom below
-  640px.
+  960px.
 - The diagram shows only steps DevPlane performs today. A later phase adds its step
   (such as a deployment) when that phase is built, never before.
 
@@ -413,14 +420,17 @@ Every page change ends with a screenshot check against this document:
 
 1. Run DevPlane (`./gradlew bootRun`) with services that cover the states being
    checked: an empty catalog, several pages of services, all three lifecycle
-   stages, and a service with and without a repository.
-2. Take full-page screenshots with Playwright at 1280px and 390px wide, for every
-   state the change touches, including error states and keyboard focus on a
+   stages, a service with and without a repository, and services with 63-character
+   names and owners. Short sample names hide layout bugs.
+2. Take full-page screenshots with Playwright at 1280px, 768px, and 390px wide, for
+   every state the change touches, including error states and keyboard focus on a
    control.
 3. Check each screenshot against the Never list, then for:
    - colors and sizes that aren't in the Design values
    - more than one primary button in a region
-   - sideways scrolling at 390px
+   - sideways scrolling at each width, measured by comparing
+     `document.documentElement.scrollWidth` with `clientWidth`, not judged by eye
+   - identifiers that overlap other text, are cut off, or split when they would fit
    - text that breaks the Writing rules
 4. Fix what's wrong and take the screenshots again. Screenshots are for review and
    aren't committed. The Playwright MCP server saves them in `.playwright-mcp/`.

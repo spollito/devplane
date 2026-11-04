@@ -121,17 +121,24 @@ a:focus-visible {
 	outline-offset: 2px;
 }
 
-/* Atkinson Hyperlegible Mono runs wider than the sans, so it's set 1px smaller. */
+/*
+ * Atkinson Hyperlegible Mono runs wider than the sans, so it's set 1px smaller. An
+ * inline-block moves to the next line as a unit, so a name stays whole when it fits,
+ * and only breaks inside its own box when it doesn't: a valid name can be 63 characters.
+ */
 .id {
+	display: inline-block;
+	max-width: 100%;
 	font-family: var(--font-mono);
 	font-size: calc(1em - 1px);
-	white-space: nowrap;
-}
-
-/* A title can hold a 63-character name, so it may wrap. */
-h1 .id {
 	white-space: normal;
 	overflow-wrap: anywhere;
+}
+
+/* Text decoration doesn't reach inside an inline-block. */
+a:hover .id,
+a:focus-visible .id {
+	text-decoration: underline;
 }
 
 .muted {
@@ -268,9 +275,15 @@ h1 .id {
 	color: var(--text-muted);
 }
 
+.breadcrumbs li {
+	display: flex;
+	gap: var(--space-2);
+	min-width: 0;
+	max-width: 100%;
+}
+
 .breadcrumbs li + li::before {
 	content: "/";
-	margin-right: var(--space-2);
 	color: var(--text-muted);
 }
 
@@ -311,16 +324,21 @@ h1 .id {
 	align-items: center;
 	justify-content: center;
 	gap: var(--space-2);
-	height: 32px;
-	padding: 0 var(--space-3);
+	min-height: 32px;
+	max-width: 100%;
+	padding: 5px var(--space-3); /* 32px tall with one line of text; a long name can wrap */
 	border: 1px solid var(--line-control);
 	border-radius: var(--radius-control);
 	background: transparent;
 	color: var(--text);
 	font: 600 14px/20px var(--font-sans);
-	white-space: nowrap;
 	cursor: pointer;
 	transition: background-color 100ms, border-color 100ms;
+}
+
+/* A long name wraps inside a button, and reads better from the left. */
+.button .id {
+	text-align: left;
 }
 
 .button:hover {
@@ -489,6 +507,28 @@ p.when-pending {
 	width: 100%;
 	border-collapse: collapse;
 	border: 1px solid var(--line);
+	table-layout: fixed;
+}
+
+/* Fixed widths, so a long identifier wraps in its own column. Description gets the rest. */
+.table .cell-name {
+	width: 24%;
+}
+
+.table .cell-owner {
+	width: 14%;
+}
+
+.table .cell-lifecycle {
+	width: 132px;
+}
+
+.table .cell-repository {
+	width: 18%;
+}
+
+.table .cell-updated {
+	width: 120px;
 }
 
 .table th {
@@ -520,8 +560,6 @@ p.when-pending {
 }
 
 .table .cell-description {
-	max-width: 0;
-	width: 100%;
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
@@ -591,14 +629,16 @@ p.when-pending {
 /* Service summary */
 
 .summary {
-	display: grid;
-	grid-template-columns: repeat(4, max-content);
-	gap: var(--space-1) var(--space-6);
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--space-3) var(--space-6);
 }
 
 .summary div {
 	display: grid;
 	gap: var(--space-1);
+	min-width: 0;
+	max-width: 100%;
 }
 
 .summary dt {
@@ -612,7 +652,7 @@ p.when-pending {
 .path {
 	--connector: 40px;
 	display: grid;
-	grid-template-columns: minmax(170px, 0.8fr) minmax(250px, 1.2fr) minmax(330px, 1.7fr);
+	grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr) minmax(0, 1.7fr);
 	gap: var(--connector);
 	align-items: start;
 	margin: 0;
@@ -738,7 +778,7 @@ p.when-pending {
 
 .facts {
 	display: grid;
-	grid-template-columns: max-content 1fr;
+	grid-template-columns: max-content minmax(0, 1fr);
 	gap: var(--space-1) var(--space-3);
 }
 
@@ -750,6 +790,7 @@ p.when-pending {
 	display: inline-flex;
 	align-items: center;
 	gap: var(--space-2);
+	max-width: 100%;
 }
 
 /* Notices */
@@ -810,9 +851,9 @@ p.when-pending {
 	max-width: 60ch;
 }
 
-/* Narrow screens */
+/* Narrow screens: the UI's one breakpoint */
 
-@media (max-width: 640px) {
+@media (max-width: 960px) {
 	:root {
 		--gutter: var(--space-4);
 	}
@@ -828,6 +869,10 @@ p.when-pending {
 		display: none;
 	}
 
+	.table .cell-name {
+		width: auto;
+	}
+
 	.table td {
 		height: auto;
 	}
@@ -841,11 +886,6 @@ p.when-pending {
 		flex: 1;
 		width: auto;
 		min-width: 0;
-	}
-
-	.summary {
-		grid-template-columns: repeat(2, minmax(0, max-content));
-		gap: var(--space-3) var(--space-6);
 	}
 
 	.path {
