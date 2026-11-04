@@ -202,6 +202,29 @@ in a frame `same-origin`. So `api.FrameDenyFilter` sends `X-Frame-Options: DENY`
 refuse to show DevPlane in another site's frame. It's a filter rather than an
 interceptor so that it also covers Swagger UI and error pages.
 
+## Public Site
+
+The public site at https://spollito.github.io/devplane/ is for people who won't run
+DevPlane. It's static files on GitHub Pages, with no server, and it's separate from the
+application: the application doesn't depend on it.
+
+- `site/index.html` is the splash page. `site/figure.py` redraws its figure of DevPlane's
+  layers.
+- `site/demo/` is a demo that runs in the visitor's browser, with sample data in local
+  storage. `catalog.js` holds its data and rules with no DOM access, so Node's test runner
+  can check it, and `app.js` renders screens that match the application's pages. It uses
+  the application's stylesheet, but its markup is its own, and it never contacts a server.
+- `./gradlew siteBuild` assembles `build/site/` from `site/`, the application's stylesheet,
+  fonts, and icon, and `downloads/orders-api.zip`. A class in the test source set,
+  `SiteDownload`, generates that zip through the real `ProjectArchiver`, so a broken template
+  fails the site's build.
+- `.github/workflows/pages.yml` builds the site and tests the demo on every pull request,
+  and publishes it from `main`.
+
+Three tests stop the site drifting from the application without anyone noticing.
+`SiteRoadmapTests` compares the splash page's roadmap with the README. `SiteRulesTests` and
+`SiteFieldMessagesTests` compare the demo's validation rules and messages with the real ones.
+
 ## Known Gaps
 
 - **DNS rebinding:** DevPlane doesn't check the `Host` header. A site whose name
