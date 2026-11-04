@@ -11,6 +11,8 @@ deployment configuration, and operational tooling.
 
 DevPlane aims to provide a standardized self-service platform for these workflows.
 
+**[Read about it, and try the demo in your browser.](https://spollito.github.io/devplane/)**
+
 ## Vision
 
 Developers should be able to define what they want to build while DevPlane
@@ -44,6 +46,7 @@ Items marked *stretch* are optional extras once the rest of their phase works.
 - [x] Service creation workflow: generate a new service from the template
 - [x] Repository provisioning: push the generated service to a new GitHub repository
 - [x] Web UI for browsing the catalog and creating services
+- [x] Public site: a splash page and a try-it demo on GitHub Pages
 
 ### Phase 2 — Deployment
 - [ ] Containerization: generated services include a Dockerfile

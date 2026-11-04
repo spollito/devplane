@@ -1,0 +1,30 @@
+/* The demo uses the app's devplane.css. This adds only the notice that labels every screen. */
+
+.demo-notice {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--space-2) var(--space-5);
+	margin-bottom: var(--space-5);
+	padding: var(--space-3);
+	border: 1px solid var(--line);
+	background: var(--surface);
+}
+
+.demo-notice p {
+	flex: 1 1 320px;
+	max-width: 80ch;
+}
+
+.demo-notice__actions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--space-2) var(--space-4);
+}
+
+/* The page takes focus when the demo changes screens, as a page load would reset it. */
+main:focus {
+	outline: none;
+}

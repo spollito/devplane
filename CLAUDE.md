@@ -18,6 +18,10 @@ Docker must be running for tests and `bootRun`.
   them, so this is how template mistakes are caught.
 - `./gradlew bootRun`: start the app on http://localhost:8080. Spring Boot starts
   PostgreSQL from `compose.yaml`.
+- `./gradlew siteBuild`: assemble the public site from `site/` into `build/site/`,
+  with the app's stylesheet and fonts and a generated example project.
+- `node --test "site/demo/*.test.js"`: test the demo's logic. It needs Node 22, and
+  has no packages to install.
 
 ## Web UI
 

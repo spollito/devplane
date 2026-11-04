@@ -8,7 +8,7 @@
 	font-style: normal;
 	font-weight: 400;
 	font-display: swap;
-	src: url("/fonts/atkinson-hyperlegible-next-latin-400-normal.woff2") format("woff2");
+	src: url("../fonts/atkinson-hyperlegible-next-latin-400-normal.woff2") format("woff2");
 }
 
 @font-face {
@@ -16,7 +16,7 @@
 	font-style: normal;
 	font-weight: 600;
 	font-display: swap;
-	src: url("/fonts/atkinson-hyperlegible-next-latin-600-normal.woff2") format("woff2");
+	src: url("../fonts/atkinson-hyperlegible-next-latin-600-normal.woff2") format("woff2");
 }
 
 @font-face {
@@ -24,7 +24,7 @@
 	font-style: normal;
 	font-weight: 400;
 	font-display: swap;
-	src: url("/fonts/atkinson-hyperlegible-mono-latin-400-normal.woff2") format("woff2");
+	src: url("../fonts/atkinson-hyperlegible-mono-latin-400-normal.woff2") format("woff2");
 }
 
 :root {
@@ -512,7 +512,7 @@ p.when-pending {
 
 /* Fixed widths, so a long identifier wraps in its own column. Description gets the rest. */
 .table .cell-name {
-	width: 24%;
+	width: 22%;
 }
 
 .table .cell-owner {
@@ -520,15 +520,15 @@ p.when-pending {
 }
 
 .table .cell-lifecycle {
-	width: 132px;
+	width: 128px;
 }
 
 .table .cell-repository {
-	width: 18%;
+	width: 22%;
 }
 
 .table .cell-updated {
-	width: 120px;
+	width: 112px;
 }
 
 .table th {

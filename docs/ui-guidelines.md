@@ -219,14 +219,14 @@ The catalog list is a real `<table>` with `<th scope="col">` headers.
   row are clickable, not the row itself.
 - **Columns:** Name, Description, Owner, Lifecycle, Repository, and Updated, with
   fixed widths so that a long identifier wraps in its own column.
-  - **Name** (24%) links to the service.
+  - **Name** (22%) links to the service.
   - **Description** (the remaining width) is cut to one line with an ellipsis, and
     the full text is in its `title`.
   - **Owner** (14%) links to the list filtered by that owner.
-  - **Lifecycle** (132px) shows the stage's marker and name.
-  - **Repository** (18%) shows `owner/name`, linked to GitHub, or "None" in
+  - **Lifecycle** (128px) shows the stage's marker and name.
+  - **Repository** (22%) shows `owner/name`, linked to GitHub, or "None" in
     `--text-muted`.
-  - **Updated** (120px) is relative ("2 days ago") in a `<time>` element, with the
+  - **Updated** (112px) is relative ("2 days ago") in a `<time>` element, with the
     exact date and time in its `title`.
 - **Below 960px,** Description, Repository, and Updated are hidden, and the owner
   moves under the name.
@@ -304,12 +304,15 @@ link back.
 
 ## Public site
 
-DevPlane's public site is one static page on GitHub Pages that explains what
-DevPlane does and where it's going, for people who will read about it rather than
-run it. It uses the same tokens, fonts, buttons, links, and top bar as the app. It
-is written for reading rather than working, so these rules apply only to it.
+DevPlane's public site is for people who won't run DevPlane. It's a static site on
+GitHub Pages with two parts, in `site/`: a splash page that explains what DevPlane
+does and where it's going, and a demo that runs in the visitor's browser. Both use
+the same tokens, fonts, buttons, links, and top bar as the app. The splash page is
+written for reading rather than working, so the rules below apply only to the public
+site.
 
-- **Reading scale:**
+- **Reading scale,** on the splash page. The demo uses the app's scale, because it's
+  showing the app:
 
   | Step | Size / line height | Use |
   | --- | --- | --- |
@@ -328,7 +331,7 @@ is written for reading rather than working, so these rules apply only to it.
     dashed `--accent` lines mean in progress, and dotted `--line-control` lines
     mean planned.
   - Text inside a drawing never renders below 12px at the size the drawing is
-    shown.
+    shown, and the first figure is at most 760px wide when it sits below the text.
   - Each drawing has a text legend that says the same thing. Screen readers read
     the legend, and it replaces the drawing's labels below 640px.
 - **One moving part:** the layers in the first figure drift apart over the first
@@ -338,8 +341,18 @@ is written for reading rather than working, so these rules apply only to it.
 - **Only true things:**
   - The site describes what DevPlane does today, and the README's roadmap with
     each item's real state.
-  - The change that ticks a roadmap item also updates the site.
+  - The change that ticks a roadmap item also updates the site. `SiteRoadmapTests`
+    fails the build until it does.
   - The site shows no testimonials, logos, or numbers DevPlane doesn't produce.
+  - Sample data appears only in the demo, under its notice. Simulated results say
+    they're simulated, and sample repositories are never links.
+- **Demo notice:** a `--surface` strip with a `--line` border, above the content on
+  every demo screen. It says this is a demo with sample data that stays in the
+  browser, and that nothing is created on GitHub. It links to the splash page and to
+  running the real app, and holds "Reset demo".
+- **JavaScript:** the demo is the only page that needs it, and it says so without it.
+  Everything else on the site works with JavaScript off.
+- **Other hosts:** the site loads nothing from other hosts, and sets no cookies.
 
 ## Writing
 
@@ -434,3 +447,7 @@ Every page change ends with a screenshot check against this document:
    - text that breaks the Writing rules
 4. Fix what's wrong and take the screenshots again. Screenshots are for review and
    aren't committed. The Playwright MCP server saves them in `.playwright-mcp/`.
+
+The same check covers the public site. Run `./gradlew siteBuild`, and serve `build/site`
+under a `/devplane/` path, as GitHub Pages does. Compare the demo's screens with the
+app's pages: it shares their stylesheet, but its markup is its own.

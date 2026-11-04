@@ -73,3 +73,32 @@ val templateTest = tasks.register<Test>("templateTest") {
 tasks.check {
 	dependsOn(templateTest)
 }
+
+val siteDownload = tasks.register<JavaExec>("siteDownload") {
+	description = "Generates the example project that the public site's demo offers to download."
+	group = LifecycleBasePlugin.BUILD_GROUP
+	val zip = layout.buildDirectory.file("site-download/orders-api.zip")
+	classpath = sourceSets.test.get().runtimeClasspath
+	mainClass = "io.github.spollito.devplane.templates.SiteDownload"
+	args(zip.get().asFile.path)
+	outputs.file(zip)
+}
+
+tasks.register<Sync>("siteBuild") {
+	description = "Assembles the public site in build/site, with the app's stylesheet, fonts, and icon."
+	group = LifecycleBasePlugin.BUILD_GROUP
+	into(layout.buildDirectory.dir("site"))
+	from("site") {
+		exclude("figure.py", "**/*.test.js")
+	}
+	from("src/main/resources/static/css/devplane.css") {
+		into("css")
+	}
+	from("src/main/resources/static/fonts") {
+		into("fonts")
+	}
+	from("src/main/resources/static/favicon.svg")
+	from(siteDownload) {
+		into("downloads")
+	}
+}
