@@ -66,9 +66,7 @@ Items marked *stretch* are optional extras once the rest of their phase works.
 
 ## Architecture
 
-Architecture documentation will live in:
-
-`docs/architecture.md`
+Architecture documentation lives in [docs/architecture.md](docs/architecture.md).
 
 Design decisions for individual features are recorded in each change's
 `design.md` (see Development Workflow below).
@@ -203,5 +201,6 @@ openspec view     # interactive dashboard
 
 ## Status
 
-DevPlane is under active development, starting with Phase 1. Changes in
-progress live in `openspec/changes/`.
+Phase 1 is complete: DevPlane has its service catalog, Platform API, golden-path
+template, repository provisioning, and web UI. Phase 2, deployment, is next. Changes
+in progress live in `openspec/changes/`.
