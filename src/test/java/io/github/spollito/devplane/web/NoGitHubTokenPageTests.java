@@ -50,4 +50,21 @@ class NoGitHubTokenPageTests {
 		assertThat(catalog.lookUp("orders-api").repository()).isNull();
 	}
 
+	// Focus moves to an action's result
+
+	@Test
+	void aFailureNoticeTakesFocus() {
+		MvcTestResult result = mvc.post()
+			.uri("/services/orders-api/repository")
+			.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+			.param("visibility", "private")
+			.exchange();
+
+		MvcTestResult page = mvc.get().uri("/services/orders-api").flashAttrs(result.getMvcResult().getFlashMap()).exchange();
+		assertThat(HtmlPages.parse(page).select("[autofocus]")).singleElement().satisfies(notice -> {
+			assertThat(notice.attr("role")).isEqualTo("alert");
+			assertThat(notice.attr("tabindex")).isEqualTo("-1");
+		});
+	}
+
 }

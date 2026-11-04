@@ -38,6 +38,27 @@ class RegisterPageTests {
 
 	// Register a service from a form
 
+	// Focus moves to an action's result
+
+	@Test
+	void aSuccessNoticeTakesFocus() {
+		MvcTestResult result = register().param("name", "orders-api")
+			.param("owner", "payments-team")
+			.param("lifecycle", "experimental")
+			.exchange();
+
+		MvcTestResult page = mvc.get()
+			.uri("/services/orders-api")
+			.flashAttrs(result.getMvcResult().getFlashMap())
+			.exchange();
+		assertThat(HtmlPages.parse(page).select("[autofocus]")).singleElement().satisfies(notice -> {
+			assertThat(notice.attr("role")).isEqualTo("status");
+			assertThat(notice.attr("tabindex")).isEqualTo("-1");
+		});
+	}
+
+	// Register a service from a form
+
 	@Test
 	void registersAService() {
 		MvcTestResult result = register().param("name", "orders-api")
