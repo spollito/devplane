@@ -1,0 +1,540 @@
+/* The splash page. Builds on the app's devplane.css: same tokens, plus a reading scale for long text. */
+
+html {
+	scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	html {
+		scroll-behavior: auto;
+	}
+}
+
+.landing {
+	font-size: 16px;
+	line-height: 26px;
+}
+
+.landing .page {
+	padding-top: 0;
+}
+
+.landing section {
+	scroll-margin-top: var(--space-5);
+}
+
+.prose {
+	max-width: 64ch;
+}
+
+.prose p + p {
+	margin-top: var(--space-3);
+}
+
+/* Hero */
+
+.hero {
+	display: grid;
+	grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+	gap: var(--space-6);
+	align-items: center;
+	padding: var(--space-7) 0;
+}
+
+.hero__text {
+	display: grid;
+	gap: var(--space-5);
+	align-content: start;
+}
+
+.hero h1 {
+	font-size: 56px;
+	line-height: 60px;
+	letter-spacing: -0.01em;
+}
+
+.lede {
+	font-size: 18px;
+	line-height: 28px;
+	color: var(--text);
+}
+
+.hero__status {
+	display: flex;
+	align-items: center;
+	gap: var(--space-2);
+	font-size: 14px;
+	line-height: 20px;
+	color: var(--text-muted);
+}
+
+.hero__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--space-3);
+}
+
+/* Figures */
+
+.figure {
+	display: grid;
+	gap: var(--space-2);
+	min-width: 0;
+}
+
+.figure__frame {
+	border: 1px solid var(--line);
+	overflow: hidden;
+}
+
+.figure figcaption {
+	font-size: 14px;
+	line-height: 20px;
+	color: var(--text-muted);
+}
+
+.figure__number {
+	margin-right: var(--space-2);
+	color: var(--text);
+	font-family: var(--font-mono);
+	font-size: 13px;
+}
+
+.layers {
+	display: block;
+	width: 100%;
+	height: auto;
+}
+
+.grid-dot {
+	fill: var(--line);
+}
+
+.guides line {
+	stroke: var(--line);
+	stroke-dasharray: 3 4;
+}
+
+.layer {
+	--stroke: var(--line-control);
+}
+
+.layer--built {
+	--stroke: var(--text);
+}
+
+.layer--next {
+	--stroke: var(--accent);
+}
+
+.layer polygon,
+.layer polyline,
+.layer line {
+	stroke: var(--stroke);
+	stroke-width: 1.25;
+	stroke-linejoin: round;
+	stroke-linecap: round;
+}
+
+.layer__top {
+	fill: var(--bg);
+}
+
+.layer__side {
+	fill: var(--surface);
+}
+
+.layer__detail polygon {
+	fill: var(--bg);
+}
+
+.layer__detail polyline {
+	fill: none;
+}
+
+.layer .layer__detail * {
+	stroke-width: 1.25;
+}
+
+.layer--next .layer__top,
+.layer--next .layer__side {
+	stroke-dasharray: 6 4;
+}
+
+.layer--planned .layer__top,
+.layer--planned .layer__side {
+	stroke-dasharray: 1.5 3.5;
+}
+
+.callout circle {
+	fill: var(--stroke);
+}
+
+.callout line {
+	stroke-width: 1;
+}
+
+.callout text {
+	font-family: var(--font-sans);
+}
+
+/* The drawing scales to about 0.88 in the hero, so these render at 14px and 12px. */
+.callout__name {
+	fill: var(--text);
+	font-size: 16px;
+	font-weight: 600;
+}
+
+.callout__what,
+.callout__status {
+	fill: var(--text-muted);
+	font-size: 14px;
+}
+
+.marker {
+	stroke-width: 1;
+}
+
+.marker--built {
+	fill: var(--text);
+	stroke: none;
+}
+
+.marker--next {
+	fill: none;
+	stroke: var(--accent);
+	stroke-dasharray: 2 1.5;
+}
+
+.marker--planned {
+	fill: none;
+	stroke: var(--line-control);
+	stroke-dasharray: 1 1.5;
+}
+
+.hero .marker-icon {
+	width: 8px;
+	height: 8px;
+	flex: none;
+	overflow: visible;
+}
+
+/* The layers drift apart as the page scrolls: the page's one moving moment. */
+@supports (animation-timeline: scroll()) {
+	@media (prefers-reduced-motion: no-preference) {
+		.layer {
+			animation: drift linear both;
+			animation-timeline: scroll(root);
+			animation-range: 0 70vh;
+		}
+
+		.layer--1 { --drift: -18px; }
+		.layer--2 { --drift: -6px; }
+		.layer--3 { --drift: 6px; }
+		.layer--4 { --drift: 18px; }
+
+		@keyframes drift {
+			to {
+				transform: translateY(var(--drift));
+			}
+		}
+	}
+}
+
+/* The figure's callouts, as text: read by screen readers, and shown on narrow screens. */
+.legend {
+	display: grid;
+	gap: var(--space-3);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	font-size: 14px;
+	line-height: 20px;
+}
+
+.legend li {
+	display: grid;
+	grid-template-columns: 8px 1fr;
+	gap: 0 var(--space-3);
+	align-items: baseline;
+}
+
+.legend .marker-icon {
+	width: 8px;
+	height: 8px;
+	overflow: visible;
+}
+
+/* Sections */
+
+.block {
+	display: grid;
+	gap: var(--space-5);
+	padding: var(--space-7) 0;
+	border-top: 1px solid var(--line);
+}
+
+.block h2 {
+	font-size: 24px;
+	line-height: 32px;
+}
+
+.block__intro {
+	display: grid;
+	gap: var(--space-3);
+}
+
+.block__intro p {
+	color: var(--text-muted);
+}
+
+.split {
+	display: grid;
+	grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+	gap: var(--space-6);
+	align-items: start;
+}
+
+/* What it does today: the path diagram at reading size. */
+.landing .path {
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.landing .step {
+	gap: var(--space-4);
+	padding: var(--space-5);
+}
+
+.landing .step h3 {
+	font-size: 16px;
+	line-height: 24px;
+}
+
+.landing .step p {
+	font-size: 14px;
+	line-height: 22px;
+	color: var(--text-muted);
+}
+
+/* Method above path, so every step's endpoint lines up the same way. */
+.endpoint {
+	display: grid;
+	gap: 2px;
+	margin-top: auto;
+	padding-top: var(--space-3);
+	border-top: 1px solid var(--line);
+	font-family: var(--font-mono);
+	font-size: 13px;
+	line-height: 20px;
+}
+
+.endpoint__method {
+	color: var(--accent);
+}
+
+.landing .step {
+	align-self: stretch;
+	grid-template-rows: 1fr auto;
+}
+
+/* Code and file trees */
+
+.code {
+	margin: 0;
+	padding: var(--space-4);
+	overflow-x: auto;
+	border: 1px solid var(--line);
+	background: var(--surface);
+	font-family: var(--font-mono);
+	font-size: 13px;
+	line-height: 22px;
+	color: var(--text);
+}
+
+.tree {
+	margin: 0;
+	padding: var(--space-5);
+	overflow-x: auto;
+	font-family: var(--font-mono);
+	font-size: 13px;
+	line-height: 22px;
+	white-space: pre;
+}
+
+.tree .dir {
+	color: var(--text-muted);
+}
+
+/* Roadmap */
+
+.phases {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	border-top: 1px solid var(--line);
+}
+
+.phase {
+	display: grid;
+	grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+	gap: var(--space-3) var(--space-6);
+	padding: var(--space-5) 0;
+	border-bottom: 1px solid var(--line);
+}
+
+.phase__head {
+	display: grid;
+	gap: var(--space-1);
+	align-content: start;
+}
+
+.phase__head h3 {
+	font-size: 16px;
+	line-height: 24px;
+}
+
+.phase__state {
+	display: flex;
+	align-items: center;
+	gap: var(--space-2);
+	font-size: 14px;
+	line-height: 20px;
+	color: var(--text-muted);
+}
+
+.items {
+	display: grid;
+	gap: var(--space-2);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	font-size: 15px;
+	line-height: 24px;
+}
+
+.items li {
+	display: grid;
+	grid-template-columns: 8px 1fr;
+	gap: var(--space-3);
+	align-items: baseline;
+}
+
+.items .marker-icon,
+.phase__state .marker-icon {
+	width: 8px;
+	height: 8px;
+	overflow: visible;
+}
+
+.stretch {
+	color: var(--text-muted);
+}
+
+/* How it's built */
+
+.facts-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: var(--space-5) var(--space-6);
+}
+
+.facts-grid div {
+	display: grid;
+	gap: var(--space-1);
+	align-content: start;
+	padding-top: var(--space-3);
+	border-top: 1px solid var(--line-control);
+}
+
+.facts-grid dt {
+	font-weight: 600;
+}
+
+.facts-grid dd {
+	color: var(--text-muted);
+	font-size: 15px;
+	line-height: 24px;
+}
+
+/* Footer */
+
+.footer {
+	border-top: 1px solid var(--line);
+}
+
+.footer__inner {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	gap: var(--space-3);
+	max-width: var(--content-width);
+	margin: 0 auto;
+	padding: var(--space-5) var(--gutter) var(--space-6);
+	font-size: 14px;
+	line-height: 20px;
+	color: var(--text-muted);
+}
+
+/* Wide screens show the drawing's callouts; narrow screens show the legend instead. */
+@media (min-width: 641px) {
+	.figure--layers .legend {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+	}
+}
+
+/* Below this width, the drawing would be too small for its labels to stay at 12px. */
+@media (max-width: 1100px) {
+	.hero {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.figure--layers {
+		max-width: 760px;
+	}
+}
+
+/* The app's breakpoint, where the path diagram also stacks. */
+@media (max-width: 960px) {
+	.split,
+	.landing .path {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+@media (max-width: 640px) {
+	.hero {
+		padding: var(--space-6) 0;
+	}
+
+	.hero h1 {
+		font-size: 40px;
+		line-height: 44px;
+	}
+
+	/* Crop the drawing to the layers; the legend below says what each one is. */
+	.figure--layers .layers {
+		width: 165%;
+		max-width: none;
+	}
+
+	.figure--layers .callout {
+		display: none;
+	}
+
+	.phase {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.facts-grid {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.topbar .nav--sections {
+		display: none;
+	}
+}
