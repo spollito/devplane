@@ -44,6 +44,13 @@ class ServicePageTests {
 		TestCatalog.register(catalog, "orders-api", "payments-team", "Order management REST API");
 	}
 
+	// Focus moves to an action's result
+
+	@Test
+	void noNoticeNoFocusChange() {
+		assertThat(HtmlPages.parse(mvc.get().uri("/services/orders-api").exchange()).select("[autofocus]")).isEmpty();
+	}
+
 	// View a service's page
 
 	@Test

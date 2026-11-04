@@ -77,10 +77,16 @@ class CatalogPages {
 	}
 
 	private static int pageNumber(@Nullable String page) {
-		if (page == null || !page.matches("[0-9]{1,9}")) {
+		if (page == null || !page.matches("[0-9]+")) {
 			return 1;
 		}
-		return Math.max(Integer.parseInt(page), 1);
+		try {
+			return Math.max(Integer.parseInt(page), 1);
+		}
+		catch (NumberFormatException ex) {
+			// Too many digits for an int, so it's far past the end, not invalid.
+			return Integer.MAX_VALUE;
+		}
 	}
 
 	/** "21–40 of 57" when there's more than one page, or "3 services" when everything fits. */

@@ -195,3 +195,17 @@ a browser sends from another site, before the controller runs:
 
 The refusal is a `CrossSiteRequestException`, so the API answers with problem
 details and pages with the HTML 403 page.
+
+That check can't see a click inside a framed page, because the browser labels a form
+in a frame `same-origin`. So `api.FrameDenyFilter` sends `X-Frame-Options: DENY` and
+`Content-Security-Policy: frame-ancestors 'none'` with every response, and browsers
+refuse to show DevPlane in another site's frame. It's a filter rather than an
+interceptor so that it also covers Swagger UI and error pages.
+
+## Known Gaps
+
+- **DNS rebinding:** DevPlane doesn't check the `Host` header. A site whose name
+  resolves to `127.0.0.1` looks same-origin to the browser, so it passes the
+  cross-site check. The fix is to refuse requests whose `Host` isn't `localhost` or
+  `127.0.0.1`. It's future work, and would need revisiting if DevPlane ever runs
+  anywhere but a developer's laptop.

@@ -71,6 +71,14 @@ class PageStructureTests {
 		});
 	}
 
+	// Pages have an icon
+
+	@ParameterizedTest
+	@ValueSource(strings = { "/services", "/services/orders-api", "/register", "/services/orders-api/unregister" })
+	void everyPageLinksTheIcon(String path) {
+		assertThat(page(path).selectFirst("link[rel=icon]").attr("href")).isEqualTo("/favicon.svg");
+	}
+
 	private Document page(String path) {
 		MvcTestResult result = mvc.get().uri(path).exchange();
 		assertThat(result).hasStatusOk();

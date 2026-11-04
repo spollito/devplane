@@ -135,6 +135,33 @@ class ViewAndListServicesTests {
 		assertThat(result).bodyJson().extractingPath("$.size").isEqualTo(100);
 	}
 
+	@Test
+	void pagePastTheLast() {
+		registerNumbered(3);
+
+		assertThat(mvc.get().uri("/api/v1/services?page=1")).hasStatusOk().bodyJson().isLenientlyEqualTo("""
+				{"items": [], "totalItems": 3, "totalPages": 1}
+				""");
+	}
+
+	@Test
+	void pageNumberTooLargeToReach() {
+		register("orders-api", "payments-team");
+		register("payments-api", "payments-team");
+		register("auth-service", "identity-team");
+
+		assertThat(mvc.get().uri("/api/v1/services?page=2147483647")).hasStatusOk()
+			.bodyJson()
+			.isLenientlyEqualTo("""
+					{"items": [], "page": 2147483647, "totalItems": 3, "totalPages": 1}
+					""");
+		assertThat(mvc.get().uri("/api/v1/services?owner=payments-team&page=2147483647")).hasStatusOk()
+			.bodyJson()
+			.isLenientlyEqualTo("""
+					{"items": [], "page": 2147483647, "totalItems": 2, "totalPages": 1}
+					""");
+	}
+
 	// Filter services by owner
 
 	@Test

@@ -12,4 +12,6 @@ interface ServiceRepository extends JpaRepository<ServiceEntity, Long> {
 
 	Page<ServiceEntity> findByOwner(String owner, Pageable pageable);
 
+	long countByOwner(String owner);
+
 }

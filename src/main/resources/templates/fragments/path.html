@@ -11,9 +11,11 @@
 
 	<!--/*
 		Why the repository wasn't created, inside the repository step. reason is
-		DevPlane's own detail, and status the failure's status: a 503 means no token.
+		DevPlane's own detail, and status the failure's status: a 503 means no token. It
+		takes focus, on page load and in htmx's swap, so the next Tab continues from it.
 	*/-->
-	<div th:fragment="repositoryError(reason, status)" class="notice notice--error" role="alert">
+	<div th:fragment="repositoryError(reason, status)" class="notice notice--error" role="alert" tabindex="-1"
+			autofocus>
 		<svg th:replace="~{fragments/icons :: error}"></svg>
 		<div class="notice__body">
 			<p><strong>Couldn't create the repository</strong></p>
