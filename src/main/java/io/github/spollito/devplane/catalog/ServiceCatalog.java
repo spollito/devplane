@@ -5,10 +5,12 @@ import java.sql.SQLException;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 import org.jspecify.annotations.Nullable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -88,9 +90,17 @@ public class ServiceCatalog {
 		return service.getRepository();
 	}
 
-	/** Lists services one page at a time, optionally only those with the given owner. */
+	/**
+	 * Lists services one page at a time, optionally only those with the given owner. A
+	 * page past the last is empty, with the same totals, however far past it is.
+	 */
 	@Transactional(readOnly = true)
 	public Page<RegisteredService> list(@Nullable String owner, Pageable pageable) {
+		// Spring Data refuses an offset that doesn't fit in an int. No page that far exists.
+		if (pageable.getOffset() > Integer.MAX_VALUE) {
+			long total = (owner != null) ? repository.countByOwner(owner) : repository.count();
+			return new PageImpl<>(List.of(), pageable, total);
+		}
 		Page<ServiceEntity> services = (owner != null) ? repository.findByOwner(owner, pageable)
 				: repository.findAll(pageable);
 		return services.map(RegisteredService::from);

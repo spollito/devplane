@@ -118,6 +118,17 @@ class CatalogPageTests {
 			.containsExactlyElementsOf(pageNumber.equals("9") ? numbered(21, 25) : numbered(1, 20));
 	}
 
+	@ParameterizedTest
+	@ValueSource(strings = { "107374184", "2147483647", "99999999999" })
+	void showsTheLastPageForHugePageNumbers(String pageNumber) {
+		registerNumbered(25);
+
+		MvcTestResult result = mvc.get().uri("/services?page={page}", pageNumber).exchange();
+
+		assertThat(result).hasStatusOk();
+		assertThat(names(HtmlPages.parse(result))).containsExactlyElementsOf(numbered(21, 25));
+	}
+
 	// Filter the catalog by owner
 
 	@Test
