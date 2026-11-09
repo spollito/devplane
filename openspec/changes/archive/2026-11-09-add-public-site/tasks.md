@@ -52,10 +52,10 @@
 
 ## 5. Publishing
 
-- [ ] 5.1 Add `.github/workflows/pages.yml` with its `build` and `deploy` jobs. Verify on the
+- [x] 5.1 Add `.github/workflows/pages.yml` with its `build` and `deploy` jobs. Verify on the
   pull request that the workflow builds and runs the demo's tests without deploying ("A pull
   request doesn't publish").
-- [ ] 5.2 Update `docs/ui-guidelines.md`'s Public site section as the design lists, and
+- [x] 5.2 Update `docs/ui-guidelines.md`'s Public site section as the design lists, and
   `docs/mockups/README.md` to say `site/` is the real site. Describe the site in
   docs/architecture.md, and link to it from the README. Verify `openspec validate --all
   --strict`, and that the links resolve once the site is live.
@@ -66,10 +66,10 @@
   on the splash page and every demo screen at 1280px, 768px, and 390px, including a
   63-character name and owner. Confirm the "Requests stay on the site" scenario from the
   browser's network log, compare the demo with the app's pages, and fix what the check finds.
-- [ ] 6.2 Ask the repository owner before enabling Pages, with GitHub Actions as its source.
+- [x] 6.2 Ask the repository owner before enabling Pages, with GitHub Actions as its source.
   Once it's enabled, tick the roadmap item, run `./gradlew build`, and confirm CI passes on
   the pull request.
-- [ ] 6.3 After merging, confirm "Publishes from main" at
+- [x] 6.3 After merging, confirm "Publishes from main" at
   `https://spollito.github.io/devplane/`, and repeat the network check on the live site. Tick
   this task in the archive pull request.
 
