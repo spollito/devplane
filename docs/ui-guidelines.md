@@ -148,7 +148,8 @@ next to a text label, and icons are hidden from screen readers with
 | Secondary link | `--text`, underlined on hover and focus | Other links in a table row or summary, such as owners and repositories |
 
 - Buttons are at least 32px tall, growing only when a label has to wrap, with 12px
-  side padding and a 14px label at weight 600.
+  side padding and a 14px label at weight 600. Their 5px vertical padding is off the
+  spacing scale, because it's what makes one line of text exactly 32px tall.
 - A page or region has at most one primary button.
 - A table row has one `--accent` link, its name, so the row's main link stands
   out. Other links in the row are secondary links.

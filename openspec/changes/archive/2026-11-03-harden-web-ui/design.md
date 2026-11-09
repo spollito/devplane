@@ -93,6 +93,11 @@ Supporting changes, each found by the prototype:
 | `.facts` | Second column `minmax(0, 1fr)` | Lets a long name shrink |
 | `.breadcrumbs li` | `display: flex`, with the `/` as a flex item | The `/` stayed alone on its own line |
 | `.repo-link` | `max-width: 100%` | Keeps the link and icon inside the step |
+| `.button .id` | `text-align: left` | A long name wrapped off-center in the danger button |
+
+The screenshot check also found that a name filling its line pushed the text after it
+onto a line alone. So a notice's full stop, and the "?" in the unregister page's title,
+sit inside the name's box.
 
 Alternatives:
 
